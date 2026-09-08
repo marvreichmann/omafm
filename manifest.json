@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "id": "com.github.marvreichmann.omasdr",
   "name": "OmaSDR",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "author": "marv",
   "license": "MIT",
   "description": "Listen to FM radio through an SDR++ server.",

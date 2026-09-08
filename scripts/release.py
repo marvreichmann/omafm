@@ -40,7 +40,7 @@ info = {
 (root / "bin/build-info.json").write_text(json.dumps(info, indent=2) + "\n")
 destination = root / "dist" / manifest["id"]
 destination.mkdir(parents=True, exist_ok=True)
-for name in ["manifest.json", "BarWidget.qml", "Panel.qml", "Receiver.qml", "README.md",
+for name in ["manifest.json", "BarWidget.qml", "Panel.qml", "Receiver.qml", "Bookmarks.qml", "README.md",
              "PUBLISHING.md", "LICENSE", "preview.png", "VALIDATION.md", "Cargo.toml", "Cargo.lock", "bin", "licenses", "src", "tests", "scripts"]:
     source = root / name
     if source.is_dir():

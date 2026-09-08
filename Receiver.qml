@@ -6,6 +6,10 @@ Item {
     property string server: "127.0.0.1:5259"
     property real frequency: 102.4
     property real volume: 0.3
+    property bool muted: false
+    // What the backend is actually told to play at. Mute keeps `volume` intact
+    // so unmuting returns to the level the slider still shows.
+    readonly property real outputVolume: muted ? 0 : volume
     property string status: "Disconnected"
     property string phase: "stopped"
     property bool failed: false
@@ -27,7 +31,16 @@ Item {
     }
     function setVolume(value) {
         volume = Math.max(0, Math.min(1, value))
-        if (backend.running) backend.write(JSON.stringify({ volume: volume }) + "\n")
+        // Moving the slider is an unambiguous request to hear something.
+        muted = false
+        sendVolume()
+    }
+    function toggleMute() {
+        muted = !muted
+        sendVolume()
+    }
+    function sendVolume() {
+        if (backend.running) backend.write(JSON.stringify({ volume: outputVolume }) + "\n")
     }
     function connectServer() {
         if (backend.running) return
@@ -41,7 +54,7 @@ Item {
         phase = "connecting"
         status = "Connecting…"
         backend.command = [decodeURIComponent(String(Qt.resolvedUrl("bin/omasdr")).replace(/^file:\/\//, "")),
-            "--server", server.trim(), "--frequency", String(frequency), "--volume", String(volume)]
+            "--server", server.trim(), "--frequency", String(frequency), "--volume", String(outputVolume)]
         backend.running = true
         launchCheck.restart()
     }

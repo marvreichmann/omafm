@@ -20,11 +20,13 @@ Ui.BarWidget {
         panelLoader.item.anchorItem = button
         panelLoader.item.hostWidget = root
         panelLoader.item.receiver = receiver
+        panelLoader.item.bookmarks = bookmarks
     }
     implicitWidth: button.implicitWidth
     implicitHeight: button.implicitHeight
     onBarChanged: injectPanel()
 
+    Bookmarks { id: bookmarks }
     Receiver {
         id: receiver
         server: String(root.setting("server", "127.0.0.1:5259"))

@@ -53,7 +53,7 @@ fn options() -> Result<Options, String> {
     while let Some(a) = args.next() {
         if a == "--help" {
             println!(
-                "OmaSDR 1.1.0 — stereo broadcast FM for SDR++\n\
+                "OmaSDR 1.2.0 — stereo broadcast FM for SDR++\n\
                 --server HOST:PORT --frequency MHz --volume 0..1\n\
                 --seconds N --wav FILE --no-audio\n\
                 stdin JSON lines: {{\"frequency\":102.4}}, {{\"volume\":0.3}}, {{\"stop\":true}}\n\

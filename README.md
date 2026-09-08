@@ -13,6 +13,11 @@ stations fade to mono on their own. Enter either `102.4` or `102,4`. The −/+ b
 steps. Volume affects only the radio. Closing the panel keeps audio playing;
 Disconnect, disabling the plugin, or unloading it stops reception.
 
+Save the station or server in the field with `＋` and give it a name; the saved
+names appear as a row of shortcuts. Click one to switch, double-click to rename,
+right-click to remove, or press Alt+1…9 for the first nine stations. Bookmarks
+live in `~/.local/state/omarchy/omasdr.json`.
+
 ## Install
 
 For **x86-64 Omarchy with the Quattro shell**. The plugin includes
@@ -45,7 +50,8 @@ omarchy plugin enable com.github.marvreichmann.omasdr
 2. Enter the server as `host:port` (SDR++ normally uses port `5259`).
 3. Enter a frequency in MHz and press Connect.
 4. Press Enter after editing a frequency, or use −/+. Adjust Volume as needed.
-5. Press Escape or click outside to close the panel. Use Disconnect to stop.
+5. Mute leaves the volume slider where it is; moving the slider unmutes.
+6. Press Escape or click outside to close the panel. Use Disconnect to stop.
 
 The server must already have a working radio source selected and a sample rate
 between 240 kHz and 20 MHz. This client leaves source selection, gain, and

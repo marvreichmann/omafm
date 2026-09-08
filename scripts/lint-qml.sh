@@ -7,4 +7,4 @@ imports=$(mktemp -d /tmp/omasdr-lint.XXXXXX)
 trap 'rm -rf -- "$imports"' EXIT
 ln -s "${OMARCHY_PATH:-/usr/share/omarchy}/shell" "$imports/qs"
 lint=$(command -v qmllint || printf /usr/lib/qt6/bin/qmllint)
-"$lint" -I "$imports" BarWidget.qml Panel.qml Receiver.qml
+"$lint" -I "$imports" BarWidget.qml Panel.qml Receiver.qml Bookmarks.qml

@@ -41,7 +41,13 @@ tests fail loudly instead of hanging.
   writes `{"frequency":…}` / `{"volume":…}` / `{"stop":true}` lines, parses stdout
   events into `phase` + `status` + `failed`. Panel and bar are pure views over these.
 - `Panel.qml` — Omathought-styled UI; holds no state, calls `receiver.tune()` /
-  `receiver.setVolume()`.
+  `receiver.setVolume()` / `receiver.toggleMute()`. `BookmarkStrip` is one inline
+  component used twice, over the station list and the server list; only its
+  accessors differ.
+- `Bookmarks.qml` — named stations and servers in
+  `$XDG_STATE_HOME/omarchy/omasdr.json`. Writes are refused until the first load
+  settles, so a slow read cannot blank an existing file, and an unparseable file
+  is kept rather than overwritten.
 - `src/main.rs` — arg parsing, a stdin reader thread (bounded line length), and one
   blocking select-ish loop: read socket → frame → dispatch → demodulate → push audio.
   Emits `event()` JSON lines; `stats` lines once a second (QML ignores them).
@@ -70,6 +76,10 @@ Constraints worth knowing before changing things:
 - Audio is stereo everywhere downstream of `Fm::process`: the PulseAudio spec, the
   WAV header, the `chunks(1920)` push size, and the `audioSamples` stat (which counts
   frames, not samples). Changing the channel count means changing all four.
+- Bookmarks cannot live in the widget's Omarchy settings: `settings` is one-way
+  from the `shell.json` bar entry, so the panel cannot write a bookmark back.
+- A new QML file must be added in three places: `scripts/release.py`'s packaged
+  file list, `scripts/lint-qml.sh`, and whatever loads it.
 - The frequency range 65–108 MHz and the volume range 0–1 are validated in three
   places (Rust args, Rust stdin commands, QML `tune`). Keep them in sync.
 - Server sample rate must be 240 kHz–20 MHz; anything else is a hard `Fm::new` error.

@@ -6,6 +6,29 @@ follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-09-08
+
+### Added
+
+- **Named bookmarks** for both stations and servers, shown as a row of
+  shortcuts under the field each one fills in. `＋` saves what is currently in
+  the field and asks for a name, double-clicking a bookmark renames it, and
+  right-clicking removes it. The bookmark matching the current value is
+  highlighted.
+- **Alt+1…9** tunes the first nine saved stations without leaving the keyboard.
+  Alt is the modifier because a bare digit belongs to the frequency field.
+- A **mute button** beside the volume slider. Muting leaves the slider where it
+  is and the readout reads `Muted`; moving the slider unmutes.
+
+### Notes
+
+- Bookmarks persist to `$XDG_STATE_HOME/omarchy/omasdr.json` (by default
+  `~/.local/state/omarchy/omasdr.json`), next to the shell's own state. They
+  cannot live in the widget's Omarchy settings: `settings` reaches the widget
+  one-way from the bar's `shell.json` entry, so the panel cannot write to it.
+- An unreadable bookmarks file is left alone rather than overwritten, and a
+  single malformed entry drops itself instead of the whole list.
+
 ## [1.1.0] - 2026-09-08
 
 ### Added
@@ -63,6 +86,7 @@ Version 1.0.0 is mono only, with European 50 µs de-emphasis. Source selection,
 gain, and sample rate stay with SDR++; the server must already have a working
 radio source and a sample rate between 240 kHz and 20 MHz.
 
-[Unreleased]: https://github.com/marvreichmann/omasdr/compare/v1.1.0...HEAD
+[Unreleased]: https://github.com/marvreichmann/omasdr/compare/v1.2.0...HEAD
+[1.2.0]: https://github.com/marvreichmann/omasdr/releases/tag/v1.2.0
 [1.1.0]: https://github.com/marvreichmann/omasdr/releases/tag/v1.1.0
 [1.0.0]: https://github.com/marvreichmann/omasdr/releases/tag/v1.0.0

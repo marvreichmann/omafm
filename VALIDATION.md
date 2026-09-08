@@ -95,3 +95,25 @@ Still outstanding for 1.1.0: reception from a real SDR++ server, stereo playback
 through PipeWire (the stream should now report `float32le 2ch 48000Hz`), the
 mono fallback on a weak or mono station, and the panel's `Listening · FM stereo`
 label on screen.
+
+## 1.2.0 — bookmarks and mute, on screen
+
+- The eleven Rust tests, Clippy, `omarchy plugin validate`, and QML lint were
+  rerun. Lint covers `Bookmarks.qml` now and still emits only the
+  `QProcess::ExitStatus` warning, once per file that handles `Process.onExited`.
+- The packaged folder was copied into `~/.config/omarchy/plugins/` and the panel
+  was confirmed **on screen**: both bookmark strips with their `+` buttons, the
+  empty-state hints, the mute button beside the volume readout, and the
+  `Alt+1...9` footer.
+- Seeding `~/.local/state/omarchy/omasdr.json` with two stations and one server
+  and restarting the shell drew all three as shortcuts, with the entries
+  matching the current frequency and server highlighted. The seeded file was
+  removed afterwards.
+- Reaching a reloaded plugin needs `omarchy-restart-shell`, not
+  `omarchy-shell shell rescanPlugins`: the launcher runs Quickshell with
+  `QS_DISABLE_FILE_WATCHER=1`, so a rescan re-reads the registry but keeps
+  serving the QML the engine already compiled.
+
+Not tested at 1.2.0: creating, renaming, and removing a bookmark through the
+panel (only the load path was exercised), the `Alt+1...9` shortcut, mute during
+playback, and everything on-air that 1.1.0 already left outstanding.

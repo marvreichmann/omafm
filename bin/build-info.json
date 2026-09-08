@@ -1,14 +1,14 @@
 {
-  "version": "1.1.0",
+  "version": "1.2.0",
   "target": "x86_64-unknown-linux-gnu",
   "rustc": "rustc 1.98.1 (48a229cea 2026-09-01)",
-  "binarySha256": "2583b2af64e9b31584370c313576c37c1dffe19b8fbd8849ce3c406a47e9d128",
+  "binarySha256": "ce6ade1534b115a53d3fd8d6c13e47ea2948d4ca4b21ff619ad3d10f72978158",
   "sourceSha256": {
-    "Cargo.lock": "3b879777bc6bb77e97347601700258711c22772d05f8aa4a5e56ff847362460c",
-    "Cargo.toml": "12e4e4b224d365a2f35f6d307c4cf9a430414803c442686a6c85254211195390",
+    "Cargo.lock": "0cd0355e4a1e30e339e3a7cc84f27fb9e4e1b20170814cb56c3cec3fd1920209",
+    "Cargo.toml": "9dcfb55e68c8229d7e7f0fe7214f46f1094dfaac59e55a87412d4cd05fffde18",
     "src/audio.rs": "3ee89376124c80e92aa1dcf0f858c702fe1c7affcc5c554a694a0493ea9eb7e6",
     "src/dsp.rs": "13f7e6f60dfa9abead93352bf26c4b628946ab643dab521b8128414111a5bf10",
-    "src/main.rs": "d2cae2dab7c78d67b6d7739eafe4511567caa62965465eebdda03216e8f480af",
+    "src/main.rs": "1da8fb0f371062c2307155c3ed63570812d5957c8d8f0306bf0d6649836acd5f",
     "src/protocol.rs": "b48981191a7df9346aacef958e76382ce235f99cd57d4a2c74ed4c85972efd37"
   }
 }
