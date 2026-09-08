@@ -224,7 +224,7 @@ Ui.Panel {
                 Text {
                     Layout.fillWidth: true
                     text: root.receiver && root.receiver.failed ? root.receiver.status
-                        : "Enter to tune · Alt+1…9 for saved stations · Esc to close"
+                        : "Alt+1…9 for saved stations · right-click one to edit · Esc to close"
                     textFormat: Text.PlainText
                     color: root.receiver && root.receiver.failed ? Color.urgent : root.dim
                     font.family: root.fontFamily
@@ -272,9 +272,18 @@ Ui.Panel {
             nameField.forceActiveFocus()
         }
         function commit() {
-            if (editing === -2) strip.saved(nameField.text)
-            else if (editing >= 0 && editing < items.length) strip.renamed(editing, nameField.text)
+            const index = editing
+            if (index === -2) strip.saved(nameField.text)
+            else if (index >= 0 && index < items.length) strip.renamed(index, nameField.text)
+            close(index === -2 ? items.length : index)
+        }
+        // Closing the editor takes the focus with it, so hand it back to the
+        // bookmark that was being edited rather than leaving it nowhere.
+        function close(focusIndex) {
             editing = -1
+            const chip = focusIndex >= 0 && focusIndex < chips.count ? chips.itemAt(focusIndex) : null
+            if (chip) chip.forceActiveFocus()
+            else addButton.forceActiveFocus()
         }
 
         spacing: root.spacing.sm
@@ -287,6 +296,7 @@ Ui.Panel {
                 spacing: root.spacing.sm
                 visible: !strip.empty
                 Repeater {
+                    id: chips
                     model: strip.items
                     delegate: Ui.Button {
                         id: chip
@@ -297,7 +307,7 @@ Ui.Panel {
                         // nine, which the panel's footer advertises.
                         tooltipText: strip.detailOf(modelData)
                             + (index < 9 ? " · Alt+" + (index + 1) : "")
-                            + " · double-click renames · right-click removes"
+                            + " · right-click or F2 to rename or remove"
                         Accessible.name: strip.labelOf(modelData) + ", " + strip.detailOf(modelData)
                         selected: strip.valueOf(modelData) === strip.currentValue
                         focusable: true
@@ -306,13 +316,16 @@ Ui.Panel {
                         fontFamily: root.fontFamily
                         fontSize: root.fonts.caption
                         onClicked: strip.activated(modelData)
-                        TapHandler {
-                            acceptedButtons: Qt.LeftButton
-                            onDoubleTapped: strip.beginRename(chip.index)
-                        }
-                        TapHandler {
-                            acceptedButtons: Qt.RightButton
-                            onTapped: strip.removed(chip.index)
+                        // Ui.Button owns a full-size MouseArea, so a child
+                        // TapHandler never sees a press: its own signals are the
+                        // only way in, and it has no double-click to offer.
+                        onRightClicked: strip.beginRename(chip.index)
+                        // Right-click has no keyboard equivalent, so a focused
+                        // chip answers F2 and the menu key as well.
+                        Keys.onPressed: function(event) {
+                            if (event.key !== Qt.Key_F2 && event.key !== Qt.Key_Menu) return
+                            event.accepted = true
+                            strip.beginRename(chip.index)
                         }
                     }
                 }
@@ -326,6 +339,7 @@ Ui.Panel {
                 font.pixelSize: root.fonts.caption
             }
             Ui.PanelActionButton {
+                id: addButton
                 iconText: "󰐕"
                 tooltipText: strip.saveHint
                 Accessible.name: strip.saveHint
@@ -345,12 +359,27 @@ Ui.Panel {
                 Layout.fillWidth: true
                 heading: strip.editing === -2 ? "Name this bookmark" : "Rename bookmark"
                 onAccepted: strip.commit()
-                Keys.onEscapePressed: function(event) { strip.editing = -1; event.accepted = true }
+                Keys.onEscapePressed: function(event) {
+                    strip.close(strip.editing)
+                    event.accepted = true
+                }
             }
             RadioButton {
                 text: "Save"
                 Accessible.name: "Save bookmark name"
                 onClicked: strip.commit()
+            }
+            RadioButton {
+                // Removing from the editor rather than straight off the chip
+                // means the name being deleted is on screen first.
+                visible: strip.editing >= 0
+                text: "Remove"
+                Accessible.name: "Remove this bookmark"
+                onClicked: {
+                    const index = strip.editing
+                    strip.close(-1)
+                    strip.removed(index)
+                }
             }
         }
     }

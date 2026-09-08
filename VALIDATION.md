@@ -114,6 +114,13 @@ label on screen.
   `QS_DISABLE_FILE_WATCHER=1`, so a rescan re-reads the registry but keeps
   serving the QML the engine already compiled.
 
-Not tested at 1.2.0: creating, renaming, and removing a bookmark through the
-panel (only the load path was exercised), the `Alt+1...9` shortcut, mute during
-playback, and everything on-air that 1.1.0 already left outstanding.
+- The full bookmark round trip was driven through the panel with `wtype` and
+  checked against both the screen and the file: F2 on a focused bookmark opened
+  the editor prefilled and selected; renaming `Local` to `Studio` updated the
+  shortcut and the JSON; Remove emptied `servers`; `+` created it again. `Alt+2`
+  tuned 104.6 MHz and moved the highlight to the second station.
+
+Not tested at 1.2.0: the mouse gestures themselves — no pointer-synthesis tool
+is installed, so right-click was exercised only through `beginRename`, the same
+function `onRightClicked` calls. Mute during playback and everything on-air that
+1.1.0 left outstanding also remain untested.
