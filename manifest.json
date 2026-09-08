@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "id": "marv.omasdr",
+  "id": "com.github.marvreichmann.omasdr",
   "name": "OmaSDR",
   "version": "1.0.0",
   "author": "marv",

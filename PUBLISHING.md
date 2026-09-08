@@ -3,12 +3,14 @@
 Follow the [Omarchy publishing guide](https://plugins.omarchy.org/publish.html)
 and [development guide](https://plugins.omarchy.org/develop.html).
 
-1. Keep the permanent non-reserved ID `marv.omasdr` consistent in the root
-   manifest and QML. Confirm the author and license before the initial release.
+1. Keep the permanent non-reserved ID `com.github.marvreichmann.omasdr`
+   consistent in the root manifest and QML. Confirm the author and license
+   before the initial release.
 2. Run the Rust tests, Clippy, `scripts/build.sh`, and `scripts/lint-qml.sh` on
    x86-64 Omarchy. Verify `bin/SHA256SUMS` from the repository root.
-3. Copy `dist/marv.omasdr/` into `~/.config/omarchy/plugins/` for runtime testing.
-   Validate the folder, rescan, and enable it. Test clicks, typing, tuning,
+3. Copy `dist/com.github.marvreichmann.omasdr/` into
+   `~/.config/omarchy/plugins/` for runtime testing. Validate the folder,
+   rescan, and enable it. Test clicks, typing, tuning,
    volume/mute, Escape, outside dismissal, shell summon/hide, disconnect,
    disable/re-enable, shell restart, and removal. Watch shell logs for errors.
    Confirm that disabling/removing the plugin releases the server and audio.

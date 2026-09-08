@@ -33,8 +33,10 @@ no station identity or subjective listening-quality claim is made.
 
 ## 1.0.0 — installation from the public repository
 
-Repeated after tagging v1.0.0, against
-<https://github.com/marvreichmann/omasdr>.
+Repeated against <https://github.com/marvreichmann/omasdr>. The first pass ran
+under the plugin's original `marv.omasdr` id; the id became
+`com.github.marvreichmann.omasdr` before the release was cut, and the install
+and panel checks below were rerun under the new one.
 
 - The nine Rust tests, Clippy, `omarchy plugin validate` (repository root and
   packaged folder), and QML lint were rerun at 1.0.0. Lint still emits only the
@@ -49,10 +51,10 @@ Repeated after tagging v1.0.0, against
   `bin/omasdr` arrived mode 755 and reports `OmaSDR 1.0.0`, and its checksums
   verify against the committed metadata.
 - The widget landed in the bar's right section, as `defaultSection` specifies.
-  `omarchy-shell shell summon marv.omasdr '{}'` returned `ok` and drew the
+  `omarchy-shell shell summon com.github.marvreichmann.omasdr '{}'` returned `ok` and drew the
   panel with the shipped defaults — `127.0.0.1:5259`, 102.4 MHz, 30% — read
   through the manifest fallbacks, since this bar entry carries no overrides.
-  `omarchy-shell shell hide marv.omasdr` closed it. The shell journal recorded
+  `omarchy-shell shell hide com.github.marvreichmann.omasdr` closed it. The shell journal recorded
   no OmaSDR warning or error, only its two plugin-reload lines.
 
 This round covers packaging and installation from the published repository. It

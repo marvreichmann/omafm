@@ -6,7 +6,7 @@ import qs.Ui as Ui
 
 Ui.Panel {
     id: root
-    moduleName: "marv.omasdr"
+    moduleName: "com.github.marvreichmann.omasdr"
     manageIpc: false
 
     property var anchorItem: null

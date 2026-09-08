@@ -33,13 +33,13 @@ the repository and does **not** execute installers or build hooks.
 
 To install a locally built archive instead, extract the
 `omasdr-<version>-linux-x86_64.tar.gz` that `scripts/build.sh` writes to
-`dist/` into `~/.config/omarchy/plugins/`. It contains a `marv.omasdr/`
-folder. Then run:
+`dist/` into `~/.config/omarchy/plugins/`. It contains a
+`com.github.marvreichmann.omasdr/` folder. Then run:
 
 ```sh
-omarchy plugin validate ~/.config/omarchy/plugins/marv.omasdr
+omarchy plugin validate ~/.config/omarchy/plugins/com.github.marvreichmann.omasdr
 omarchy-shell shell rescanPlugins
-omarchy plugin enable marv.omasdr
+omarchy plugin enable com.github.marvreichmann.omasdr
 ```
 
 ## Listen
@@ -62,11 +62,11 @@ Panel edits last for the current widget instance. Optional `server`,
 override those starting values. It never connects automatically on load.
 
 ```sh
-omarchy-shell shell summon marv.omasdr '{}'
-omarchy-shell shell hide marv.omasdr
-omarchy plugin disable marv.omasdr
-omarchy plugin enable marv.omasdr
-omarchy plugin remove marv.omasdr
+omarchy-shell shell summon com.github.marvreichmann.omasdr '{}'
+omarchy-shell shell hide com.github.marvreichmann.omasdr
+omarchy plugin disable com.github.marvreichmann.omasdr
+omarchy plugin enable com.github.marvreichmann.omasdr
+omarchy plugin remove com.github.marvreichmann.omasdr
 ```
 
 ## Build and verify (developers only)
@@ -88,7 +88,8 @@ bash scripts/lint-qml.sh
 ```
 
 `scripts/build.sh` creates `bin/omasdr`, its checksum/build metadata and third
-party notices, `dist/marv.omasdr/`, and a versioned archive. Keep `bin/omasdr`,
+party notices, `dist/com.github.marvreichmann.omasdr/`, and a versioned
+archive. Keep `bin/omasdr`,
 `bin/SHA256SUMS`, `bin/build-info.json`, and `licenses/` in the published repo.
 The archive includes the Rust source, lockfile, tests, and build scripts.
 

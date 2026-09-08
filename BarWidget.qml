@@ -4,7 +4,7 @@ import qs.Ui as Ui
 
 Ui.BarWidget {
     id: root
-    moduleName: "marv.omasdr"
+    moduleName: "com.github.marvreichmann.omasdr"
     readonly property var barStyle: Style.bar
 
     readonly property Ui.Panel loadedPanel: panelLoader.item as Ui.Panel

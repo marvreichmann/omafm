@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-An Omarchy bar-widget plugin (`marv.omasdr`): a QML panel for the Omarchy/Quickshell
+An Omarchy bar-widget plugin (`com.github.marvreichmann.omasdr`): a QML panel for the Omarchy/Quickshell
 shell plus a bundled Rust executable that talks the **SDR++ native server protocol**,
 demodulates mono broadcast FM, and plays it through PulseAudio/PipeWire.
 

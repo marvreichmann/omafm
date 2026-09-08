@@ -7,5 +7,8 @@ mkdir -p bin
 install -m755 target/release/omasdr bin/omasdr
 sha256sum bin/omasdr > bin/SHA256SUMS
 python3 scripts/release.py
-omarchy plugin validate dist/marv.omasdr
-printf 'Built dist/marv.omasdr and release archive.\n'
+# release.py names the packaged folder after the manifest id; read it back
+# rather than repeating the id here, so a rename only happens in one place.
+plugin=$(jq -r .id manifest.json)
+omarchy plugin validate "dist/$plugin"
+printf 'Built dist/%s and release archive.\n' "$plugin"
