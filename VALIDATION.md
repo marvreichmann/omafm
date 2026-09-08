@@ -1,6 +1,9 @@
 # Local validation — 2026-09-08
 
-Tested on x86-64 Omarchy Quattro, with its existing PipeWire/PulseAudio service.
+Tested on x86-64 Omarchy Quattro 4.0.0.alpha, with its existing
+PipeWire/PulseAudio service.
+
+## 0.1.0 — backend, audio, and the packaged folder
 
 - Nine Rust tests passed: FM recovery at 250 kHz, 1.024 MHz, and 2.4 MHz;
   19 kHz pilot rejection; frequency validation; sample/framing validation;
@@ -26,5 +29,36 @@ Tested on x86-64 Omarchy Quattro, with its existing PipeWire/PulseAudio service.
   address as an Omarchy widget setting; the shipped default remains localhost.
 
 The recorded PCM and desktop audio stream establish decoding and playback;
-no station identity or subjective listening-quality claim is made. Marketplace
-submission and installation from a public Git repository have not been done.
+no station identity or subjective listening-quality claim is made.
+
+## 1.0.0 — installation from the public repository
+
+Repeated after tagging v1.0.0, against
+<https://github.com/marvreichmann/omasdr>.
+
+- The nine Rust tests, Clippy, `omarchy plugin validate` (repository root and
+  packaged folder), and QML lint were rerun at 1.0.0. Lint still emits only the
+  `QProcess::ExitStatus` warning above.
+- The release workflow reran the tests and Clippy on a clean checkout of the
+  tag, matched the tag against `manifest.json`, `Cargo.toml`, and
+  `bin/build-info.json`, and re-verified `bin/omasdr` against `bin/SHA256SUMS`
+  and every source hash in `bin/build-info.json`.
+- The previous hand-copied 0.1.0 folder was removed, then
+  `omarchy plugin add https://github.com/marvreichmann/omasdr --enable --yes`
+  cloned and enabled the plugin. The clone is a git checkout at `v1.0.0`,
+  `bin/omasdr` arrived mode 755 and reports `OmaSDR 1.0.0`, and its checksums
+  verify against the committed metadata.
+- The widget landed in the bar's right section, as `defaultSection` specifies.
+  `omarchy-shell shell summon marv.omasdr '{}'` returned `ok` and drew the
+  panel with the shipped defaults — `127.0.0.1:5259`, 102.4 MHz, 30% — read
+  through the manifest fallbacks, since this bar entry carries no overrides.
+  `omarchy-shell shell hide marv.omasdr` closed it. The shell journal recorded
+  no OmaSDR warning or error, only its two plugin-reload lines.
+
+This round covers packaging and installation from the published repository. It
+did not repeat the on-air checks: no SDR++ server was running, so reception,
+playback, retuning, and disable/re-enable at 1.0.0 rest on the 0.1.0 results
+above. The code changed between them only in version strings, manifest
+metadata, README wording, and the removal of an uncalled QML function; no
+receiver, DSP, or audio path was touched. Marketplace submission has not been
+done.
