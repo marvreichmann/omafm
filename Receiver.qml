@@ -7,6 +7,9 @@ Item {
     property real frequency: 102.4
     property real volume: 0.3
     property bool muted: false
+    // Mono by construction: the transform that removes the noise also removes
+    // the pilot, so this and stereo are alternatives, not companions.
+    property bool noiseReduction: false
     // What the backend is actually told to play at. Mute keeps `volume` intact
     // so unmuting returns to the level the slider still shows.
     readonly property real outputVolume: muted ? 0 : volume
@@ -16,6 +19,10 @@ Item {
     property bool stereo: false
     property bool stopping: false
     readonly property bool running: backend.running
+
+    // Raised once a connection has actually been asked for, so the panel can
+    // remember the address without saving every keystroke.
+    signal serverUsed(string address)
 
     function tune(text) {
         const n = Number(String(text).replace(",", "."))
@@ -35,6 +42,10 @@ Item {
         muted = false
         sendVolume()
     }
+    function setNoiseReduction(on) {
+        noiseReduction = !!on
+        if (backend.running) backend.write(JSON.stringify({ noiseReduction: noiseReduction }) + "\n")
+    }
     function toggleMute() {
         muted = !muted
         sendVolume()
@@ -53,8 +64,13 @@ Item {
         stopping = false
         phase = "connecting"
         status = "Connecting…"
-        backend.command = [decodeURIComponent(String(Qt.resolvedUrl("bin/omasdr")).replace(/^file:\/\//, "")),
+        // Built whole and assigned once: reading a QML list property hands back
+        // a copy, so pushing onto backend.command would be dropped silently.
+        const argv = [decodeURIComponent(String(Qt.resolvedUrl("bin/omasdr")).replace(/^file:\/\//, "")),
             "--server", server.trim(), "--frequency", String(frequency), "--volume", String(outputVolume)]
+        if (noiseReduction) argv.push("--noise-reduction")
+        backend.command = argv
+        serverUsed(server.trim())
         backend.running = true
         launchCheck.restart()
     }

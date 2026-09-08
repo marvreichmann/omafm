@@ -20,6 +20,8 @@ Item {
     // [{ name, frequency }] and [{ name, address }], in user-chosen order.
     property var stations: []
     property var servers: []
+    // The address most recently connected to, so the panel can open on it.
+    property string lastServer: ""
     // Writes are refused until the first load settles, so a read failure that
     // is really a slow disk cannot blank an existing file.
     property bool loaded: false
@@ -40,6 +42,12 @@ Item {
         servers = servers.concat([{ name: cleanName(name, value), address: value }])
         schedule()
         return true
+    }
+    function rememberServer(address) {
+        const value = String(address).trim().slice(0, 128)
+        if (!value || value === lastServer) return
+        lastServer = value
+        schedule()
     }
     function renameStation(index, name) { rename("stations", index, name) }
     function renameServer(index, name) { rename("servers", index, name) }
@@ -94,6 +102,8 @@ Item {
             if (!address) return null
             return { name: cleanName(entry.name, address), address: address }
         })
+        lastServer = String(parsed.lastServer === undefined ? "" : parsed.lastServer)
+            .replace(/\s+/g, "").slice(0, 128)
         loaded = true
     }
     function readList(value, convert) {
@@ -112,6 +122,7 @@ Item {
         if (!loaded) return
         file.setText(JSON.stringify({
             version: 1,
+            lastServer: lastServer,
             stations: stations,
             servers: servers
         }, null, 2) + "\n")

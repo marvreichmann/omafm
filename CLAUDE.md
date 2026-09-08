@@ -89,6 +89,18 @@ Constraints worth knowing before changing things:
 - The frequency range 65–108 MHz and the volume range 0–1 are validated in three
   places (Rust args, Rust stdin commands, QML `tune`). Keep them in sync.
 - Server sample rate must be 240 kHz–20 MHz; anything else is a hard `Fm::new` error.
+- `Denoiser` is SDR++'s FM IF noise reduction: a 32-bin sliding FFT keeping only
+  the strongest bin. Because one bin survives, the inverse transform at the
+  window's centre is `X[idx] * (-1)^idx`, so it costs one forward FFT per input
+  sample and no second transform. It cannot carry stereo at any rate we run at:
+  passing the 53 kHz composite would need bins ~106 kHz wide, i.e. a 3.4 MHz
+  channel rate. Treat it as an alternative to stereo.
+- The stereo blend reads the 76 kHz noise floor (4× the pilot, so the PLL's own
+  oscillator supplies the carrier), not pilot amplitude: a pilot survives noise
+  the difference channel does not. The post-mix lowpass is four cascaded poles
+  because one lets the 53 kHz programme edge through at only −21 dB, which
+  swamps the measurement. `NOISE_STEREO`/`NOISE_MONO` are calibrated against a
+  zero-noise floor of 0.0003–0.0008 across the supported rates.
 - Compressed IQ (packet kind 3) is refused by design — compression is disabled at
   handshake, so receiving it means the server misbehaved.
 - `Panel.qml` deliberately has no `PanelKeyCatcher`: the form's fields need Tab,

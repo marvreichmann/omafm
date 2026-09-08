@@ -6,6 +6,31 @@ follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+- **IF noise reduction**, the same idea as SDR++'s: a 32-bin sliding transform
+  of the IF keeps only its strongest bin, which for FM is the carrier, and
+  discards the rest as noise. Measured 11–21 dB less hiss. It is **mono by
+  construction** — the transform that removes the noise removes the 19 kHz
+  pilot with it — so it is off by default and offered as an alternative to
+  stereo, not a companion. `--noise-reduction`, or the panel's toggle.
+- The server field opens on the address last connected to, remembered in
+  `omasdr.json` beside the bookmarks.
+
+### Changed
+
+- The bar icon no longer grows a dot while a station is playing.
+
+### Fixed
+
+- Weak stations no longer hiss. The stereo blend was keyed to pilot amplitude,
+  which the PLL's narrowband correlation reports just as strongly on a noisy
+  signal as a clean one, so the difference channel stayed fully matrixed at any
+  noise level and carried roughly 20 dB more noise than the sum. The blend now
+  reads the noise floor at 76 kHz — above the programme and RDS, and free
+  because the pilot PLL already supplies a coherent carrier there — and fades to
+  mono as it rises.
+
 ## [1.2.0] - 2026-09-08
 
 ### Added

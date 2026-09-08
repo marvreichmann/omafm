@@ -13,6 +13,10 @@ stations fade to mono on their own. Enter either `102.4` or `102,4`. The −/+ b
 steps. Volume affects only the radio. Closing the panel keeps audio playing;
 Disconnect, disabling the plugin, or unloading it stops reception.
 
+Weak stations fade toward mono as the signal degrades. **Noise reduction** in
+the panel trades stereo away entirely for a much quieter signal — it removes the
+pilot along with the noise, so it is mono only.
+
 Save the station or server in the field with `＋` and give it a name; the saved
 names appear as a row of shortcuts. Click one to switch to it, right-click it —
 or press F2 while it is under the pointer — to rename or remove it, or press

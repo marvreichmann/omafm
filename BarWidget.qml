@@ -26,10 +26,16 @@ Ui.BarWidget {
     implicitHeight: button.implicitHeight
     onBarChanged: injectPanel()
 
-    Bookmarks { id: bookmarks }
+    Bookmarks {
+        id: bookmarks
+        // The stored address wins once it loads, so the panel opens on the
+        // server that last worked rather than the shipped default.
+        onLastServerChanged: if (lastServer) receiver.server = lastServer
+    }
     Receiver {
         id: receiver
         server: String(root.setting("server", "127.0.0.1:5259"))
+        onServerUsed: function(address) { bookmarks.rememberServer(address) }
         frequency: Number(root.setting("frequency", 102.4))
         volume: Number(root.setting("volume", 0.3))
     }
@@ -56,17 +62,6 @@ Ui.BarWidget {
             fontFamily: button.fontFamily
             fontSize: root.barStyle.iconFont
             color: button.foreground
-        }
-        Rectangle {
-            visible: receiver.phase === "playing"
-            width: Style.space(4)
-            height: width
-            radius: width / 2
-            color: button.foreground
-            anchors.right: parent.right
-            anchors.bottom: parent.bottom
-            anchors.rightMargin: Style.space(3)
-            anchors.bottomMargin: Style.space(3)
         }
         onPressed: function(buttonCode) { if (buttonCode === Qt.LeftButton) root.toggle() }
     }

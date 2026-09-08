@@ -222,6 +222,36 @@ Ui.Panel {
                         onClicked: root.receiver.toggleMute()
                     }
                 }
+                RowLayout {
+                    Layout.fillWidth: true
+                    spacing: root.spacing.sm
+                    Ui.PanelActionButton {
+                        // Mono by construction: the transform that removes the
+                        // noise removes the pilot with it.
+                        iconText: "󰆧"
+                        tooltipText: root.receiver && root.receiver.noiseReduction
+                            ? "Noise reduction on · mono only"
+                            : "Noise reduction · much quieter, but mono only"
+                        Accessible.name: "IF noise reduction"
+                        foreground: root.receiver && root.receiver.noiseReduction
+                            ? Color.accent : root.foreground
+                        fontFamily: root.fontFamily
+                        focusable: true
+                        bordered: root.receiver && root.receiver.noiseReduction
+                        enabled: !!root.receiver
+                        onClicked: root.receiver.setNoiseReduction(!root.receiver.noiseReduction)
+                    }
+                    Text {
+                        Layout.fillWidth: true
+                        text: root.receiver && root.receiver.noiseReduction
+                            ? "Noise reduction · mono"
+                            : "Noise reduction off"
+                        color: root.dim
+                        font.family: root.fontFamily
+                        font.pixelSize: root.fonts.caption
+                        elide: Text.ElideRight
+                    }
+                }
                 Ui.PanelSeparator { Layout.fillWidth: true; foreground: root.foreground }
                 RadioButton {
                     Layout.fillWidth: true

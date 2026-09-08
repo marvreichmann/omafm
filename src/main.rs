@@ -39,6 +39,7 @@ struct Options {
     seconds: Option<f64>,
     wav: Option<String>,
     audio: bool,
+    denoise: bool,
 }
 fn options() -> Result<Options, String> {
     let mut opt = Options {
@@ -48,6 +49,7 @@ fn options() -> Result<Options, String> {
         seconds: None,
         wav: None,
         audio: true,
+        denoise: false,
     };
     let mut args = std::env::args().skip(1);
     while let Some(a) = args.next() {
@@ -55,14 +57,19 @@ fn options() -> Result<Options, String> {
             println!(
                 "OmaSDR 1.2.0 — stereo broadcast FM for SDR++\n\
                 --server HOST:PORT --frequency MHz --volume 0..1\n\
-                --seconds N --wav FILE --no-audio\n\
-                stdin JSON lines: {{\"frequency\":102.4}}, {{\"volume\":0.3}}, {{\"stop\":true}}\n\
+                --seconds N --wav FILE --no-audio --noise-reduction\n\
+                stdin JSON: {{\"frequency\":102.4}}, {{\"volume\":0.3}},\n\
+                {{\"noiseReduction\":true}}, {{\"stop\":true}}\n\
                 Closing stdin disconnects. --seconds allows unattended tests."
             );
             std::process::exit(0);
         }
         if a == "--no-audio" {
             opt.audio = false;
+            continue;
+        }
+        if a == "--noise-reduction" {
+            opt.denoise = true;
             continue;
         }
         let v = args
@@ -156,8 +163,10 @@ fn run(opt: Options) -> Result<(), String> {
     let stop = Arc::new(AtomicBool::new(false));
     let desired_freq = Arc::new(AtomicU64::new(opt.frequency.to_bits()));
     let volume = Arc::new(AtomicU32::new(opt.volume.to_bits()));
+    let denoise = Arc::new(AtomicBool::new(opt.denoise));
     let stdin_socket = socket.try_clone().map_err(|e| e.to_string())?;
     let (s, f, v) = (stop.clone(), desired_freq.clone(), volume.clone());
+    let n = denoise.clone();
     let timed = opt.seconds.is_some();
     std::thread::spawn(move || {
         let mut reader = io::stdin().lock();
@@ -182,8 +191,11 @@ fn run(opt: Options) -> Result<(), String> {
                             event("warning", "FM frequency must be between 65 and 108 MHz");
                         }
                     }
-                    if let Some(n) = cmd["volume"].as_f64().filter(|n| (0.0..=1.0).contains(n)) {
-                        v.store((n as f32).to_bits(), Ordering::Relaxed);
+                    if let Some(x) = cmd["volume"].as_f64().filter(|x| (0.0..=1.0).contains(x)) {
+                        v.store((x as f32).to_bits(), Ordering::Relaxed);
+                    }
+                    if let Some(on) = cmd["noiseReduction"].as_bool() {
+                        n.store(on, Ordering::Relaxed);
                     }
                 }
                 Err(_) => event("warning", "Invalid controller command"),
@@ -215,6 +227,9 @@ fn run(opt: Options) -> Result<(), String> {
     let mut dropped = 0u64;
     let mut playing = false;
     let mut stereo = false;
+    // Reported once a second so a station that will not hold stereo can be
+    // diagnosed without rebuilding: noise is the 76 kHz floor driving the blend.
+    let (mut blend, mut noise, mut pilot, mut width) = (0.0f32, 0.0f32, 0.0f32, 0.0f32);
     let result = (|| -> Result<(), String> {
         loop {
             if stop.load(Ordering::Relaxed)
@@ -235,7 +250,9 @@ fn run(opt: Options) -> Result<(), String> {
                 protocol::command(&mut socket, 4, &wanted.to_le_bytes())
                     .map_err(|e| e.to_string())?;
                 tuned = wanted;
-                fm = Some(dsp::Fm::new(sample_rate)?);
+                let mut next = dsp::Fm::new(sample_rate)?;
+                next.set_noise_reduction(denoise.load(Ordering::Relaxed));
+                fm = Some(next);
                 mute_until = Instant::now() + Duration::from_millis(150);
                 event("tuning", &format!("Tuning to {:.1} MHz", tuned / 1e6));
                 playing = false;
@@ -274,7 +291,9 @@ fn run(opt: Options) -> Result<(), String> {
                             }
                             sample_rate = f64::from_le_bytes(data[4..].try_into().unwrap());
                             let first = fm.is_none();
-                            fm = Some(dsp::Fm::new(sample_rate)?);
+                            let mut next = dsp::Fm::new(sample_rate)?;
+                            next.set_noise_reduction(denoise.load(Ordering::Relaxed));
+                            fm = Some(next);
                             if first {
                                 if opt.audio {
                                     output =
@@ -305,6 +324,7 @@ fn run(opt: Options) -> Result<(), String> {
                         last_iq = Instant::now();
                         protocol::samples(data, &mut iq)?;
                         let decoder = fm.as_mut().ok_or("IQ received before sample rate")?;
+                        decoder.set_noise_reduction(denoise.load(Ordering::Relaxed));
                         decoder.process(&iq, &mut pcm);
                         let gain = f32::from_bits(volume.load(Ordering::Relaxed));
                         let muted = Instant::now() < mute_until;
@@ -326,6 +346,10 @@ fn run(opt: Options) -> Result<(), String> {
                         // A station that gains or loses its pilot re-announces
                         // itself, so the panel never claims the wrong mode.
                         let now_stereo = decoder.stereo();
+                        blend = decoder.blend();
+                        noise = decoder.noise();
+                        pilot = decoder.pilot();
+                        width = decoder.width();
                         if !muted && !pcm.is_empty() && (!playing || now_stereo != stereo) {
                             stereo = now_stereo;
                             let mode = if stereo { "stereo" } else { "mono" };
@@ -360,7 +384,10 @@ fn run(opt: Options) -> Result<(), String> {
             if report.elapsed() >= Duration::from_secs(1) {
                 println!(
                     "{}",
-                    json!({"state":"stats", "sampleRate":sample_rate, "audioSamples":total_audio, "droppedAudioBlocks":dropped})
+                    json!({"state":"stats", "sampleRate":sample_rate, "audioSamples":total_audio,
+                        "droppedAudioBlocks":dropped, "stereoBlend":blend, "noiseFloor":noise,
+                        "pilot":pilot, "stereoWidth":width,
+                        "noiseReduction":denoise.load(Ordering::Relaxed)})
                 );
                 report = Instant::now();
             }
