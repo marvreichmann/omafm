@@ -1,14 +1,14 @@
 {
-  "version": "1.0.0",
+  "version": "1.1.0",
   "target": "x86_64-unknown-linux-gnu",
-  "rustc": "rustc 1.88.0 (6b00bc388 2025-06-23)",
-  "binarySha256": "ae4ce3a9442394070b3d21d6803c5529523983629c29e6bad7ec0644a1ffa3ba",
+  "rustc": "rustc 1.98.1 (48a229cea 2026-09-01)",
+  "binarySha256": "2583b2af64e9b31584370c313576c37c1dffe19b8fbd8849ce3c406a47e9d128",
   "sourceSha256": {
-    "Cargo.lock": "09aaea276835930d26f96f4f6e465cfef8f149060e9633adf64be5f290749d5f",
-    "Cargo.toml": "8ea7074c7974a110cf6b36966f0d75e286aa32951badc2b0557f1f7ae6d0a4df",
-    "src/audio.rs": "910e0deb14342d863c36165da0ca389d7a75821c24c9ddff1f3ac207db258e8c",
-    "src/dsp.rs": "d104d3491d2d887c390e5dcb3df990bea54e964dab2b3c864ad894108e2678cc",
-    "src/main.rs": "0daca66656c18e94d315994696af783564d3c6c4e0e9db17bb6d137787b955ed",
+    "Cargo.lock": "3b879777bc6bb77e97347601700258711c22772d05f8aa4a5e56ff847362460c",
+    "Cargo.toml": "12e4e4b224d365a2f35f6d307c4cf9a430414803c442686a6c85254211195390",
+    "src/audio.rs": "3ee89376124c80e92aa1dcf0f858c702fe1c7affcc5c554a694a0493ea9eb7e6",
+    "src/dsp.rs": "13f7e6f60dfa9abead93352bf26c4b628946ab643dab521b8128414111a5bf10",
+    "src/main.rs": "d2cae2dab7c78d67b6d7739eafe4511567caa62965465eebdda03216e8f480af",
     "src/protocol.rs": "b48981191a7df9346aacef958e76382ce235f99cd57d4a2c74ed4c85972efd37"
   }
 }

@@ -6,6 +6,24 @@ follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-09-08
+
+### Added
+
+- **Stereo reception.** The receiver locks a phase-locked loop to the 19 kHz
+  pilot, recovers the L−R difference from its suppressed 38 kHz carrier, and
+  matrixes left and right. The panel reports `stereo` or `mono` while playing,
+  and re-announces itself if a station changes mode.
+- Weak signals fade back to mono in proportion to the recovered pilot level
+  rather than switching, so a fading station loses separation before it gains
+  hiss. A station with no pilot stays exactly as loud as it was in 1.0.0.
+
+### Changed
+
+- `--wav` now writes a two-channel file, and audio output opens a stereo
+  stream. De-emphasis moved after the difference channel is brought down to
+  baseband, where it belongs.
+
 ## [1.0.0] - 2026-09-08
 
 First release.
@@ -45,5 +63,6 @@ Version 1.0.0 is mono only, with European 50 µs de-emphasis. Source selection,
 gain, and sample rate stay with SDR++; the server must already have a working
 radio source and a sample rate between 240 kHz and 20 MHz.
 
-[Unreleased]: https://github.com/marvreichmann/omasdr/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/marvreichmann/omasdr/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/marvreichmann/omasdr/releases/tag/v1.1.0
 [1.0.0]: https://github.com/marvreichmann/omasdr/releases/tag/v1.0.0

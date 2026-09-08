@@ -9,6 +9,7 @@ Item {
     property string status: "Disconnected"
     property string phase: "stopped"
     property bool failed: false
+    property bool stereo: false
     property bool stopping: false
     readonly property bool running: backend.running
 
@@ -79,6 +80,7 @@ Item {
                     const message = JSON.parse(line)
                     if (message.state === "stats") return
                     root.phase = String(message.state)
+                    if (message.state !== "warning") root.stereo = message.stereo === true
                     root.status = String(message.message || "")
                     root.failed = message.state === "error" || message.state === "warning"
                 } catch (error) {
@@ -95,6 +97,7 @@ Item {
         onExited: function(exitCode) {
             stopTimeout.stop()
             root.phase = "stopped"
+            root.stereo = false
             if (root.stopping || (exitCode === 0 && !root.failed)) {
                 root.status = "Disconnected"
                 root.failed = false

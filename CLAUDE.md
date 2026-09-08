@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 An Omarchy bar-widget plugin (`com.github.marvreichmann.omasdr`): a QML panel for the Omarchy/Quickshell
 shell plus a bundled Rust executable that talks the **SDR++ native server protocol**,
-demodulates mono broadcast FM, and plays it through PulseAudio/PipeWire.
+demodulates stereo broadcast FM, and plays it through PulseAudio/PipeWire.
 
 Two languages, one process boundary. Everything interesting is at that boundary.
 
@@ -49,8 +49,11 @@ tests fail loudly instead of hanging.
   reads; `samples()` converts int8/int16/float32 IQ payloads. Both reject malformed
   input rather than tolerating it.
 - `src/dsp.rs` — `Fm`: halfband decimation stages down to ≤600 kHz, 100 kHz channel
-  FIR, phase discriminator, 50 µs de-emphasis, 15 kHz audio FIR evaluated through a
-  64-phase fractional-delay bank at 48 kHz, DC blocker.
+  FIR, phase discriminator, a 19 kHz pilot PLL whose doubled carrier brings L−R down
+  from 38 kHz, 50 µs de-emphasis on sum and difference, 15 kHz audio FIR evaluated
+  through a 64-phase fractional-delay bank at 48 kHz, DC blocker. `process` writes
+  **interleaved** left/right pairs. The pilot correlation doubles as the lock
+  detector and drives a mono/stereo blend, so an unlocked loop degrades to mono.
 - `src/audio.rs` — hand-written `pa_simple_*` FFI (no crate). Playback lives on its
   own thread behind a bounded `sync_channel`; a full channel drops a block rather
   than stalling the receive loop, and `failed` surfaces device loss to the main loop.
@@ -64,6 +67,9 @@ Constraints worth knowing before changing things:
   to `src/` or `Cargo.*` invalidates those files — rerun `scripts/build.sh`.
 - `manifest.json` and `Cargo.toml` versions must match; `scripts/release.py` asserts it.
 - The packaged plugin must contain no symlinks (also asserted in `release.py`).
+- Audio is stereo everywhere downstream of `Fm::process`: the PulseAudio spec, the
+  WAV header, the `chunks(1920)` push size, and the `audioSamples` stat (which counts
+  frames, not samples). Changing the channel count means changing all four.
 - The frequency range 65–108 MHz and the volume range 0–1 are validated in three
   places (Rust args, Rust stdin commands, QML `tune`). Keep them in sync.
 - Server sample rate must be 240 kHz–20 MHz; anything else is a hard `Fm::new` error.

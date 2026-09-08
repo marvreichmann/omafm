@@ -21,7 +21,7 @@ Ui.Panel {
     readonly property string phaseLabel: !receiver ? "Ready"
         : receiver.failed ? "Needs attention"
         : receiver.stopping ? "Disconnecting"
-        : receiver.phase === "playing" ? "Listening · FM mono"
+        : receiver.phase === "playing" ? (receiver.stereo ? "Listening · FM stereo" : "Listening · FM mono")
         : receiver.phase === "tuning" ? "Tuning"
         : receiver.phase === "receiving" ? "Receiving"
         : receiver.running ? "Connecting"

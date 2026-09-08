@@ -69,3 +69,29 @@ above. The code changed between them only in version strings, the plugin id,
 manifest metadata, README wording, and the removal of an uncalled QML
 function; no receiver, DSP, or audio path was touched. Marketplace submission
 has not been done.
+
+## 1.1.0 — stereo decoding, off air
+
+Automated and synthetic only. **No on-air test has been run at 1.1.0**, so every
+claim below comes from generated signals, not from a broadcast station.
+
+- Eleven Rust tests passed, the eight from 1.0.0 (the pilot-rejection and FM
+  recovery tests reworked for interleaved output) plus two new ones: channel
+  separation from a synthetic composite at 250 kHz, 1.024 MHz, and 2.4 MHz, and
+  a no-pilot signal staying bit-identical across both channels. Measured
+  separation was 41.9, 41.2, and 37.5 dB; the test asserts 25 dB.
+- `cargo clippy --locked --all-targets -- -D warnings` passed, on
+  rustc 1.98.1 (the 1.0.0 binary was built with 1.88.0).
+- `omarchy plugin validate` passed on the packaged folder. QML lint still emits
+  only the `QProcess::ExitStatus` warning recorded above.
+- End to end through the shipped `bin/omasdr`: a local mock server streamed
+  250 kHz signed-16-bit IQ carrying a 1 kHz tone on the left channel only, at
+  9 % pilot injection. `--wav` wrote a two-channel 48 kHz file, the backend
+  reported `FM 102.4 MHz · stereo`, and the recording measured 42.0 dB of
+  separation. This exercises the real protocol decoder, DSP, and WAV writer, but
+  not PulseAudio and not a real receiver.
+
+Still outstanding for 1.1.0: reception from a real SDR++ server, stereo playback
+through PipeWire (the stream should now report `float32le 2ch 48000Hz`), the
+mono fallback on a weak or mono station, and the panel's `Listening · FM stereo`
+label on screen.

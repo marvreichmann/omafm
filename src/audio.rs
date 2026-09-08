@@ -77,11 +77,12 @@ impl Audio {
             let spec = SampleSpec {
                 format: 5,
                 rate: 48_000,
-                channels: 1,
+                channels: 2,
             }; // FLOAT32LE
+            // Byte counts, so stereo needs twice as many for the same latency.
             let attr = BufferAttr {
-                maxlength: 48_000,
-                tlength: 19_200,
+                maxlength: 96_000,
+                tlength: 38_400,
                 prebuf: u32::MAX,
                 minreq: u32::MAX,
                 fragsize: u32::MAX,

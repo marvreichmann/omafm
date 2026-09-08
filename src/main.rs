@@ -53,7 +53,7 @@ fn options() -> Result<Options, String> {
     while let Some(a) = args.next() {
         if a == "--help" {
             println!(
-                "OmaSDR 1.0.0 — mono broadcast FM for SDR++\n\
+                "OmaSDR 1.1.0 — stereo broadcast FM for SDR++\n\
                 --server HOST:PORT --frequency MHz --volume 0..1\n\
                 --seconds N --wav FILE --no-audio\n\
                 stdin JSON lines: {{\"frequency\":102.4}}, {{\"volume\":0.3}}, {{\"stop\":true}}\n\
@@ -119,10 +119,10 @@ impl Wav {
         self.file.write_all(b"WAVEfmt ")?;
         self.file.write_all(&16u32.to_le_bytes())?;
         self.file.write_all(&1u16.to_le_bytes())?;
-        self.file.write_all(&1u16.to_le_bytes())?;
-        self.file.write_all(&48_000u32.to_le_bytes())?;
-        self.file.write_all(&96_000u32.to_le_bytes())?;
         self.file.write_all(&2u16.to_le_bytes())?;
+        self.file.write_all(&48_000u32.to_le_bytes())?;
+        self.file.write_all(&192_000u32.to_le_bytes())?;
+        self.file.write_all(&4u16.to_le_bytes())?;
         self.file.write_all(&16u16.to_le_bytes())?;
         self.file.write_all(b"data")?;
         self.file.write_all(&self.bytes.to_le_bytes())?;
@@ -214,6 +214,7 @@ fn run(opt: Options) -> Result<(), String> {
     let mut total_audio = 0u64;
     let mut dropped = 0u64;
     let mut playing = false;
+    let mut stereo = false;
     let result = (|| -> Result<(), String> {
         loop {
             if stop.load(Ordering::Relaxed)
@@ -238,6 +239,7 @@ fn run(opt: Options) -> Result<(), String> {
                 mute_until = Instant::now() + Duration::from_millis(150);
                 event("tuning", &format!("Tuning to {:.1} MHz", tuned / 1e6));
                 playing = false;
+                stereo = false;
             }
             match socket.read(&mut buffer) {
                 Ok(0) if stop.load(Ordering::Relaxed) => break,
@@ -309,19 +311,32 @@ fn run(opt: Options) -> Result<(), String> {
                         for x in &mut pcm {
                             *x *= if muted { 0.0 } else { gain };
                         }
-                        total_audio += pcm.len() as u64;
+                        // Interleaved left/right pairs; the stat counts frames.
+                        total_audio += pcm.len() as u64 / 2;
                         if let Some(w) = wav.as_mut() {
                             w.write(&pcm).map_err(|e| e.to_string())?;
                         }
                         if let Some(a) = &output {
-                            for chunk in pcm.chunks(960) {
+                            for chunk in pcm.chunks(1920) {
                                 if !a.push(chunk) {
                                     dropped += 1;
                                 }
                             }
                         }
-                        if !playing && !muted && !pcm.is_empty() {
-                            event("playing", &format!("FM {:.1} MHz · mono", tuned / 1e6));
+                        // A station that gains or loses its pilot re-announces
+                        // itself, so the panel never claims the wrong mode.
+                        let now_stereo = decoder.stereo();
+                        if !muted && !pcm.is_empty() && (!playing || now_stereo != stereo) {
+                            stereo = now_stereo;
+                            let mode = if stereo { "stereo" } else { "mono" };
+                            println!(
+                                "{}",
+                                json!({
+                                    "state": "playing",
+                                    "message": format!("FM {:.1} MHz · {mode}", tuned / 1e6),
+                                    "stereo": stereo,
+                                })
+                            );
                             playing = true;
                         }
                     }

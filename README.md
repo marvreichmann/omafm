@@ -7,8 +7,9 @@ executable handles the network stream, FM demodulation, and playback.
 
 ![OmaSDR playing FM with an Omarchy theme](preview.png)
 
-Version 1.0.0 supports **mono broadcast FM**, 65–108 MHz, with European 50 µs
-de-emphasis. Enter either `102.4` or `102,4`. The −/+ buttons tune in 100 kHz
+Version 1.1.0 supports **stereo broadcast FM**, 65–108 MHz, with European 50 µs
+de-emphasis. Stations transmitting a 19 kHz pilot play in stereo; weak or mono
+stations fade to mono on their own. Enter either `102.4` or `102,4`. The −/+ buttons tune in 100 kHz
 steps. Volume affects only the radio. Closing the panel keeps audio playing;
 Disconnect, disabling the plugin, or unloading it stops reception.
 
@@ -109,11 +110,12 @@ developer diagnostic, not a plugin UI feature.
 
 The Rust receiver requests uncompressed signed 16-bit IQ, decodes SDR++'s
 sample framing, applies staged anti-alias and channel filters, demodulates FM,
-filters mono audio to 15 kHz, applies 50 µs de-emphasis, and resamples to 48 kHz
-with a fractional-delay filter bank. A bounded audio queue prevents memory and
+recovers the 19 kHz pilot with a phase-locked loop to matrix left and right,
+filters each channel to 15 kHz, applies 50 µs de-emphasis, and resamples to
+48 kHz with a fractional-delay filter bank. A bounded audio queue prevents memory and
 latency growth if the audio device stalls. Errors appear in the panel.
 
-No spectrum/waterfall, scanning, presets, RDS, stereo, narrow FM, AM, SSB,
+No spectrum/waterfall, scanning, presets, RDS, narrow FM, AM, SSB,
 source-control UI, or automatic reconnect is included. No packets are sent
 outside the server chosen by the user; SDR++ connections are plain TCP.
 
