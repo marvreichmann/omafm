@@ -45,22 +45,27 @@ and panel checks below were rerun under the new one.
   tag, matched the tag against `manifest.json`, `Cargo.toml`, and
   `bin/build-info.json`, and re-verified `bin/omasdr` against `bin/SHA256SUMS`
   and every source hash in `bin/build-info.json`.
-- The previous hand-copied 0.1.0 folder was removed, then
+- The previous install was removed, then
   `omarchy plugin add https://github.com/marvreichmann/omasdr --enable --yes`
-  cloned and enabled the plugin. The clone is a git checkout at `v1.0.0`,
-  `bin/omasdr` arrived mode 755 and reports `OmaSDR 1.0.0`, and its checksums
-  verify against the committed metadata.
-- The widget landed in the bar's right section, as `defaultSection` specifies.
-  `omarchy-shell shell summon com.github.marvreichmann.omasdr '{}'` returned `ok` and drew the
-  panel with the shipped defaults — `127.0.0.1:5259`, 102.4 MHz, 30% — read
-  through the manifest fallbacks, since this bar entry carries no overrides.
-  `omarchy-shell shell hide com.github.marvreichmann.omasdr` closed it. The shell journal recorded
-  no OmaSDR warning or error, only its two plugin-reload lines.
+  cloned and enabled the plugin as `com.github.marvreichmann.omasdr`. The clone
+  is a git checkout, `bin/omasdr` arrived mode 755 and reports `OmaSDR 1.0.0`,
+  and its checksums verify against the committed metadata.
+- The widget landed in the bar's right section, as `defaultSection` specifies,
+  and drew its radio glyph without the playing dot.
+  `omarchy-shell shell summon com.github.marvreichmann.omasdr '{}'` returned
+  `ok` and drew the panel with the shipped defaults — `127.0.0.1:5259`,
+  102.4 MHz, 30% — read through the manifest fallbacks, since this bar entry
+  carries no overrides. `omarchy-shell shell hide
+  com.github.marvreichmann.omasdr` closed it. The shell journal recorded no
+  OmaSDR warning or error, only its plugin-reload lines.
+- `summon` returns `ok` whenever the bar holds a live widget, even when the
+  panel Loader has produced no item, so it is not on its own evidence that the
+  panel drew. The panel was confirmed on screen instead.
 
 This round covers packaging and installation from the published repository. It
 did not repeat the on-air checks: no SDR++ server was running, so reception,
 playback, retuning, and disable/re-enable at 1.0.0 rest on the 0.1.0 results
-above. The code changed between them only in version strings, manifest
-metadata, README wording, and the removal of an uncalled QML function; no
-receiver, DSP, or audio path was touched. Marketplace submission has not been
-done.
+above. The code changed between them only in version strings, the plugin id,
+manifest metadata, README wording, and the removal of an uncalled QML
+function; no receiver, DSP, or audio path was touched. Marketplace submission
+has not been done.
