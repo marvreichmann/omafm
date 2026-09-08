@@ -123,6 +123,17 @@ fn starts_receives_retunes_and_disconnects_over_stdin() {
         }
     }
     let stdin = child.stdin.as_mut().unwrap();
+    // The noise-reduction toggle is a runtime command, so it must round-trip
+    // through the stats line rather than only working as a launch flag.
+    writeln!(stdin, "{{\"noiseReduction\":true}}").unwrap();
+    let deadline = Instant::now() + Duration::from_secs(3);
+    loop {
+        let line = rx.recv_timeout(Duration::from_secs(3)).unwrap();
+        if line.contains("\"noiseReduction\":true") {
+            break;
+        }
+        assert!(Instant::now() < deadline, "noiseReduction never reported");
+    }
     writeln!(stdin, "{{\"frequency\":103.1,\"volume\":0}}").unwrap();
     assert_eq!(
         read_command(&mut s),

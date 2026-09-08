@@ -6,31 +6,6 @@ follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
-### Added
-
-- **IF noise reduction**, the same idea as SDR++'s: a 32-bin sliding transform
-  of the IF keeps only its strongest bin, which for FM is the carrier, and
-  discards the rest as noise. Measured 11–21 dB less hiss. It is **mono by
-  construction** — the transform that removes the noise removes the 19 kHz
-  pilot with it — so it is off by default and offered as an alternative to
-  stereo, not a companion. `--noise-reduction`, or the panel's toggle.
-- The server field opens on the address last connected to, remembered in
-  `omasdr.json` beside the bookmarks.
-
-### Changed
-
-- The bar icon no longer grows a dot while a station is playing.
-
-### Fixed
-
-- Weak stations no longer hiss. The stereo blend was keyed to pilot amplitude,
-  which the PLL's narrowband correlation reports just as strongly on a noisy
-  signal as a clean one, so the difference channel stayed fully matrixed at any
-  noise level and carried roughly 20 dB more noise than the sum. The blend now
-  reads the noise floor at 76 kHz — above the programme and RDS, and free
-  because the pilot PLL already supplies a coherent carrier there — and fades to
-  mono as it rises.
-
 ## [1.2.0] - 2026-09-08
 
 ### Added
@@ -45,13 +20,42 @@ follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   Alt is the modifier because a bare digit belongs to the frequency field.
 - A **mute button** beside the volume slider. Muting leaves the slider where it
   is and the readout reads `Muted`; moving the slider unmutes.
+- **IF noise reduction**, the same idea as SDR++'s: a 32-bin sliding transform
+  of the IF keeps only its strongest bin, which for FM is the carrier, and
+  discards the rest as noise. Measured 11–21 dB less hiss. It is **mono by
+  construction** — the transform that removes the noise removes the 19 kHz
+  pilot with it — so it is off by default and offered as an alternative to
+  stereo, not a companion. `--noise-reduction`, or the panel's toggle.
+- The server field opens on the address last connected to, remembered in
+  `omasdr.json` beside the bookmarks.
+
+### Changed
+
+- The bar icon no longer grows a dot while a station is playing.
+- The stats line reports `noiseFloor`, `stereoBlend`, `stereoWidth`, `pilot`
+  and `noiseReduction`, so a station that will not hold stereo can be
+  diagnosed without rebuilding.
+
+### Fixed
+
+- **Weak stations no longer hiss.** The stereo blend was keyed to pilot
+  amplitude, which the PLL's narrowband correlation reports just as strongly on
+  a noisy signal as a clean one, so the difference channel stayed fully matrixed
+  at any noise level and carried roughly 20 dB more noise than the sum. The
+  blend now reads the noise floor at 76 kHz — above the programme and RDS, and
+  free because the pilot PLL already supplies a coherent carrier there. Rather
+  than switching to mono, the difference channel narrows as that floor rises,
+  keeping the stereo image while dropping the hiss that lives above it.
+- The DC blocker sat at 30 Hz and cost 2.8 dB of the bottom octave. At 10 Hz it
+  still stops subsonic wander and the response is flat to below 30 Hz.
 
 ### Notes
 
-- Bookmarks persist to `$XDG_STATE_HOME/omarchy/omasdr.json` (by default
-  `~/.local/state/omarchy/omasdr.json`), next to the shell's own state. They
-  cannot live in the widget's Omarchy settings: `settings` reaches the widget
-  one-way from the bar's `shell.json` entry, so the panel cannot write to it.
+- Bookmarks and the last server persist to `$XDG_STATE_HOME/omarchy/omasdr.json`
+  (by default `~/.local/state/omarchy/omasdr.json`), next to the shell's own
+  state. They cannot live in the widget's Omarchy settings: `settings` reaches
+  the widget one-way from the bar's `shell.json` entry, so the panel cannot
+  write to it.
 - An unreadable bookmarks file is left alone rather than overwritten, and a
   single malformed entry drops itself instead of the whole list.
 

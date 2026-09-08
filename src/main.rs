@@ -420,6 +420,42 @@ fn main() {
 mod tests {
     use super::*;
     #[test]
+    fn writes_a_playable_stereo_wav_header() {
+        // The header is written by hand, so parse it back: a wrong channel
+        // count or block align silently halves or doubles the playback rate.
+        let path = std::env::temp_dir().join(format!("omasdr-{}.wav", std::process::id()));
+        let _ = std::fs::remove_file(&path);
+        let name = path.to_str().unwrap();
+        {
+            let mut wav = Wav::new(name).unwrap();
+            // Six frames, interleaved left/right.
+            wav.write(&[0.0, 0.0, 0.5, -0.5, 1.0, -1.0, 0.0, 0.0, -0.5, 0.5, 1.0, 1.0])
+                .unwrap();
+            wav.finish().unwrap();
+        }
+        let bytes = std::fs::read(&path).unwrap();
+        let _ = std::fs::remove_file(&path);
+        let u32at = |o: usize| u32::from_le_bytes(bytes[o..o + 4].try_into().unwrap());
+        let u16at = |o: usize| u16::from_le_bytes(bytes[o..o + 2].try_into().unwrap());
+        assert_eq!(&bytes[..4], b"RIFF");
+        assert_eq!(&bytes[8..12], b"WAVE");
+        assert_eq!(u16at(20), 1, "PCM");
+        assert_eq!(u16at(22), 2, "channels");
+        assert_eq!(u32at(24), 48_000, "sample rate");
+        assert_eq!(u32at(28), 48_000 * 2 * 2, "byte rate");
+        assert_eq!(u16at(32), 4, "block align");
+        assert_eq!(u16at(34), 16, "bits");
+        assert_eq!(&bytes[36..40], b"data");
+        // Twelve samples of two bytes each, and the RIFF size covers it.
+        assert_eq!(u32at(40), 24, "data size");
+        assert_eq!(u32at(4), 36 + 24, "riff size");
+        assert_eq!(bytes.len(), 44 + 24);
+        // Data starts at 44; sample 4 is the +1.0 one. Full scale must not
+        // wrap round to negative, and -1.0 must not clip asymmetrically.
+        assert_eq!(i16::from_le_bytes(bytes[52..54].try_into().unwrap()), 32767);
+        assert_eq!(i16::from_le_bytes(bytes[54..56].try_into().unwrap()), -32767);
+    }
+    #[test]
     fn accepts_comma_and_rejects_invalid_tuning() {
         assert_eq!(frequency("102,4").unwrap(), 102_400_000.0);
         assert!(frequency("NaN").is_err());

@@ -633,6 +633,57 @@ mod tests {
         assert!(!reduced.stereo(), "noise reduction cannot carry stereo");
     }
     #[test]
+    fn denoiser_reconstructs_a_tone_it_should_keep() {
+        // The transform is hand written, so check it end to end: a complex tone
+        // sitting on a bin centre must come back out unchanged, delayed by half
+        // the window. A wrong twiddle, bit reversal or scale factor fails here.
+        let mut nr = Denoiser::new();
+        let bin = 5usize;
+        let tone = |n: usize| {
+            let a = TAU * bin as f32 * n as f32 / NR_BINS as f32;
+            [a.cos(), a.sin()]
+        };
+        let mut worst: f32 = 0.0;
+        for n in 0..(NR_BINS * 4) {
+            let out = nr.process(tone(n));
+            // Only judge once the window is full; the output is the centre of it.
+            if n >= NR_BINS {
+                let want = tone(n - NR_BINS / 2 + 1);
+                worst = worst.max((out[0] - want[0]).abs().max((out[1] - want[1]).abs()));
+            }
+        }
+        assert!(worst < 0.02, "reconstruction error {worst}");
+    }
+    #[test]
+    fn denoiser_is_transparent_to_a_clean_carrier() {
+        // Passing a clean FM signal through it must not wreck the audio.
+        let rate = 1_536_000.0;
+        let rms = |v: &[f32]| (v.iter().map(|x| x * x).sum::<f32>() / v.len() as f32).sqrt();
+        let level = |on: bool| {
+            let mut fm = Fm::new(rate).unwrap();
+            fm.set_noise_reduction(on);
+            let mut out = vec![];
+            let mut block = vec![];
+            let mut phase = 0.0f64;
+            let input: Vec<[f32; 2]> = (0..(rate * 0.3) as usize)
+                .map(|k| {
+                    let t = k as f64 / rate;
+                    let mpx = 0.6 * (2.0 * std::f64::consts::PI * 1000.0 * t).sin();
+                    phase += 2.0 * std::f64::consts::PI * 75_000.0 * mpx / rate;
+                    [phase.cos() as f32, phase.sin() as f32]
+                })
+                .collect();
+            for c in input.chunks(7919) {
+                fm.process(c, &mut block);
+                out.extend_from_slice(&block);
+            }
+            rms(&channel(&out, 0, 8000))
+        };
+        let (plain, reduced) = (level(false), level(true));
+        let db = 20.0 * (reduced / plain).log10();
+        assert!(db.abs() < 3.0, "clean carrier moved {db} dB through the denoiser");
+    }
+    #[test]
     fn invalid_rate() {
         assert!(Fm::new(f64::NAN).is_err());
         assert!(Fm::new(48_000.0).is_err());

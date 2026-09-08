@@ -7,7 +7,7 @@ executable handles the network stream, FM demodulation, and playback.
 
 ![OmaSDR playing FM with an Omarchy theme](preview.png)
 
-Version 1.1.0 supports **stereo broadcast FM**, 65–108 MHz, with European 50 µs
+Version 1.2.0 supports **stereo broadcast FM**, 65–108 MHz, with European 50 µs
 de-emphasis. Stations transmitting a 19 kHz pilot play in stereo; weak or mono
 stations fade to mono on their own. Enter either `102.4` or `102,4`. The −/+ buttons tune in 100 kHz
 steps. Volume affects only the radio. Closing the panel keeps audio playing;

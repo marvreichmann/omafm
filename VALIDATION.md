@@ -122,6 +122,20 @@ label on screen.
 
 - After the gesture rework, F2 on a focused server bookmark was re-checked: the
   editor opens with Save and Remove, and Escape leaves the stored file untouched.
+- **On air, against a real RTL-SDR v4 behind an SDR++ server at 1.536 MHz.** The
+  stereo blend was the fix for audible hiss: measured noise floors were 0.0048
+  (102.4 MHz), 0.028 (88.8) and 0.057 (104.6) against a 0.0005 clean reference,
+  with textbook pilots of 0.034–0.049, so every station was correctly judged too
+  noisy for full-bandwidth stereo. Strong carriers on a poor floor across the
+  whole band points at front-end overload, not weak signal; that is upstream of
+  this plugin and untested here.
+- Fifteen Rust tests now, adding the audio response at both ends, the stereo
+  blend narrowing with noise, the denoiser's reconstruction of a tone it should
+  keep, its transparency on a clean carrier, the stereo/quiet trade it forces,
+  and the WAV header parsed back field by field. The mock-server suite gained a
+  round trip of the `noiseReduction` command through the stats line.
+- `preview.png` was retaken for this version. It uses placeholder bookmarks and
+  a loopback address, not the development machine's own.
 
 Not tested at 1.2.0: the mouse gestures themselves, and F2 driven by hover
 rather than focus — no pointer-synthesis tool is installed and this Hyprland's
