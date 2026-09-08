@@ -5,10 +5,6 @@ server**, tune a frequency, and listen through the desktop's default audio
 output. The QML panel belongs to Omarchy's existing shell; a bundled Rust
 executable handles the network stream, FM demodulation, and playback.
 
-The panel follows Omathought's visual language: the shared Omarchy icon/title
-header, muted status, thin bordered rows, flat controls, and theme fonts and
-colors. The bar stays a radio icon, with a small indicator while listening.
-
 ![OmaSDR playing FM with an Omarchy theme](preview.png)
 
 Version 1.0.0 supports **mono broadcast FM**, 65–108 MHz, with European 50 µs
