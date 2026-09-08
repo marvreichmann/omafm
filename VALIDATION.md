@@ -142,10 +142,18 @@ label on screen.
 - `preview.png` was retaken for this version. It uses placeholder bookmarks and
   a loopback address, not the development machine's own.
 
-Not tested at 1.2.0: the mouse gestures themselves, and F2 driven by hover
-rather than focus — no pointer-synthesis tool is installed and this Hyprland's
-`dispatch movecursor` syntax rejected every form tried. Nor was a server
-bookmark edited while actually connected — no pointer-synthesis tool
-is installed, so right-click was exercised only through `beginRename`, the same
-function `onRightClicked` calls. Mute during playback and everything on-air that
-1.1.0 left outstanding also remain untested.
+- Right-clicking a bookmark to rename or remove it, and editing a server
+  bookmark while connected, were **confirmed working by the maintainer** after
+  the rename. Both are reported rather than measured here: no pointer-synthesis
+  tool is installed on the development machine and this Hyprland's `dispatch
+  movecursor` rejected every syntax tried, so the automated checks above reach
+  those paths only through `beginRename`, the function `onRightClicked` calls.
+
+- PipeWire reported the live stream as `float32le 2ch 48000Hz`, channel map
+  `front-left,front-right`, `application.name = OmaFM`, `media.name = FM radio`,
+  while playing 102.4 MHz from the MacMini server. That closes the stereo audio
+  path end to end on real hardware, not only in the WAV writer.
+
+Not tested at 1.2.0: mute during playback. The 1.1.0 list is otherwise closed —
+reception from a real server, the mono fallback, and the panel's mode label were
+all seen in use.
