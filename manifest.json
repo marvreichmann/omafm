@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "id": "marv.omasdr",
+  "name": "OmaSDR",
+  "version": "1.0.0",
+  "author": "marv",
+  "license": "MIT",
+  "description": "Listen to FM radio through an SDR++ server.",
+  "kinds": ["bar-widget"],
+  "entryPoints": { "barWidget": "BarWidget.qml" },
+  "barWidget": {
+    "displayName": "OmaSDR",
+    "description": "Tune mono broadcast FM from an SDR++ native server and listen through the desktop's default audio output.",
+    "category": "Media",
+    "allowMultiple": false,
+    "defaultSection": "right",
+    "defaults": { "server": "127.0.0.1:5259", "frequency": 102.4, "volume": 0.3 },
+    "schema": [
+      {
+        "key": "server",
+        "type": "string",
+        "label": "SDR++ server (host:port)",
+        "description": "Address of the SDR++ native server. Port 5259 by default.",
+        "defaultValue": "127.0.0.1:5259"
+      },
+      {
+        "key": "frequency",
+        "type": "number",
+        "label": "Starting FM frequency (MHz)",
+        "description": "Frequency the panel opens on. Broadcast FM only.",
+        "min": 65,
+        "max": 108,
+        "step": 0.1,
+        "defaultValue": 102.4
+      },
+      {
+        "key": "volume",
+        "type": "number",
+        "label": "Starting volume (0–1)",
+        "description": "Radio volume only; the desktop's own output volume is untouched.",
+        "min": 0,
+        "max": 1,
+        "step": 0.01,
+        "defaultValue": 0.3
+      }
+    ]
+  }
+}

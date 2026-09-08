@@ -1,0 +1,14 @@
+{
+  "version": "1.0.0",
+  "target": "x86_64-unknown-linux-gnu",
+  "rustc": "rustc 1.88.0 (6b00bc388 2025-06-23)",
+  "binarySha256": "ae4ce3a9442394070b3d21d6803c5529523983629c29e6bad7ec0644a1ffa3ba",
+  "sourceSha256": {
+    "Cargo.lock": "09aaea276835930d26f96f4f6e465cfef8f149060e9633adf64be5f290749d5f",
+    "Cargo.toml": "8ea7074c7974a110cf6b36966f0d75e286aa32951badc2b0557f1f7ae6d0a4df",
+    "src/audio.rs": "910e0deb14342d863c36165da0ca389d7a75821c24c9ddff1f3ac207db258e8c",
+    "src/dsp.rs": "d104d3491d2d887c390e5dcb3df990bea54e964dab2b3c864ad894108e2678cc",
+    "src/main.rs": "0daca66656c18e94d315994696af783564d3c6c4e0e9db17bb6d137787b955ed",
+    "src/protocol.rs": "b48981191a7df9346aacef958e76382ce235f99cd57d4a2c74ed4c85972efd37"
+  }
+}

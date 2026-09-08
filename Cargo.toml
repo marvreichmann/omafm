@@ -1,0 +1,16 @@
+[package]
+name = "omasdr"
+version = "1.0.0"
+edition = "2024"
+license = "MIT"
+description = "A minimal SDR++ FM receiver for Omarchy"
+
+[dependencies]
+serde_json = "1.0"
+
+[profile.release]
+lto = true
+codegen-units = 1
+strip = true
+panic = "abort"
+

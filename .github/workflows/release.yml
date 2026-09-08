@@ -1,0 +1,81 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install the PulseAudio linker files
+        # audio.rs links libpulse-simple and libpulse directly. The runner
+        # carries the runtime libraries but not the .so symlinks the linker
+        # resolves against.
+        run: sudo apt-get update && sudo apt-get install -y libpulse-dev
+
+      - name: Run the tests
+        run: cargo test --locked
+
+      - name: Lint
+        run: cargo clippy --locked --all-targets -- -D warnings
+
+      - name: Check the tag against manifest.json and Cargo.toml
+        run: |
+          tag="${GITHUB_REF_NAME#v}"
+          manifest=$(jq -r .version manifest.json)
+          crate=$(cargo metadata --no-deps --format-version=1 \
+            | jq -r '.packages[] | select(.name == "omasdr") | .version')
+          if [ "$tag" != "$manifest" ]; then
+            echo "Tag $GITHUB_REF_NAME does not match manifest version $manifest" >&2
+            exit 1
+          fi
+          if [ "$tag" != "$crate" ]; then
+            echo "Tag $GITHUB_REF_NAME does not match Cargo.toml version $crate" >&2
+            exit 1
+          fi
+
+      - name: Verify the committed executable
+        # bin/omasdr ships prebuilt, so a tag has to prove that the binary in it
+        # is still the one built from the source in it. build-info.json carries
+        # the hash of the executable and of every file it was compiled from.
+        run: |
+          tag="${GITHUB_REF_NAME#v}"
+          info=$(jq -r .version bin/build-info.json)
+          if [ "$tag" != "$info" ]; then
+            echo "Tag $GITHUB_REF_NAME does not match build-info version $info" >&2
+            exit 1
+          fi
+          test -x bin/omasdr || { echo "bin/omasdr is not executable" >&2; exit 1; }
+          sha256sum -c bin/SHA256SUMS
+          jq -r '.binarySha256 + "  bin/omasdr"' bin/build-info.json | sha256sum -c -
+          jq -r '.sourceSha256 | to_entries[] | .value + "  " + .key' bin/build-info.json \
+            | sha256sum -c -
+
+      - name: Extract the changelog section
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+          awk -v v="$version" '
+            $0 ~ "^## \\[" v "\\]" { found = 1; next }
+            found && (/^## / || /^\[[^]]+\]: /) { exit }
+            found { print }
+          ' CHANGELOG.md > release-notes.md
+          if [ ! -s release-notes.md ]; then
+            echo "No CHANGELOG.md section for $version" >&2
+            exit 1
+          fi
+          cat release-notes.md
+
+      - name: Publish the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" \
+            --title "$GITHUB_REF_NAME" \
+            --notes-file release-notes.md
