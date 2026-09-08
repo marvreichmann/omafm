@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-An Omarchy bar-widget plugin (`com.github.marvreichmann.omasdr`): a QML panel for the Omarchy/Quickshell
+An Omarchy bar-widget plugin (`com.github.marvreichmann.omafm`): a QML panel for the Omarchy/Quickshell
 shell plus a bundled Rust executable that talks the **SDR++ native server protocol**,
 demodulates stereo broadcast FM, and plays it through PulseAudio/PipeWire.
 
@@ -24,7 +24,7 @@ bash scripts/lint-qml.sh                  # qmllint with Omarchy's qs.* imports 
 Live smoke test against a real server (WAV path must not already exist):
 
 ```sh
-bin/omasdr --server HOST:5259 --frequency 102.4 --seconds 12 --wav /tmp/fm-test.wav
+bin/omafm --server HOST:5259 --frequency 102.4 --seconds 12 --wav /tmp/fm-test.wav
 ```
 
 `--no-audio` skips PulseAudio entirely — that is how the integration tests run headless.
@@ -37,7 +37,7 @@ tests fail loudly instead of hanging.
 
 - `BarWidget.qml` — bar icon, owns the `Receiver` and lazily loads the panel. Reads
   `server`/`frequency`/`volume` from the widget's Omarchy settings.
-- `Receiver.qml` — the process wrapper. Spawns `bin/omasdr` via Quickshell `Process`,
+- `Receiver.qml` — the process wrapper. Spawns `bin/omafm` via Quickshell `Process`,
   writes `{"frequency":…}` / `{"volume":…}` / `{"stop":true}` lines, parses stdout
   events into `phase` + `status` + `failed`. Panel and bar are pure views over these.
 - `Panel.qml` — Omathought-styled UI; holds no state, calls `receiver.tune()` /
@@ -51,7 +51,7 @@ tests fail loudly instead of hanging.
   strip's `switchable` gates only activation — setting `enabled: false` on a
   strip to stop mid-session server switching also kills rename and remove.
 - `Bookmarks.qml` — named stations and servers in
-  `$XDG_STATE_HOME/omarchy/omasdr.json`. Writes are refused until the first load
+  `$XDG_STATE_HOME/omarchy/omafm.json`. Writes are refused until the first load
   settles, so a slow read cannot blank an existing file, and an unparseable file
   is kept rather than overwritten.
 - `src/main.rs` — arg parsing, a stdin reader thread (bounded line length), and one
@@ -74,7 +74,7 @@ Constraints worth knowing before changing things:
 
 - The **only** runtime dependency is `serde_json`. Adding a crate means new license
   notices in `licenses/` and a bigger committed binary — do not add one casually.
-- `bin/omasdr` is **committed** with its executable bit, plus `bin/SHA256SUMS` and
+- `bin/omafm` is **committed** with its executable bit, plus `bin/SHA256SUMS` and
   `bin/build-info.json`. Omarchy clones the repo and runs no build hooks. Any change
   to `src/` or `Cargo.*` invalidates those files — rerun `scripts/build.sh`.
 - `manifest.json` and `Cargo.toml` versions must match; `scripts/release.py` asserts it.

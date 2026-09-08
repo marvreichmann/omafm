@@ -4,7 +4,7 @@ import qs.Ui as Ui
 
 Ui.BarWidget {
     id: root
-    moduleName: "com.github.marvreichmann.omasdr"
+    moduleName: "com.github.marvreichmann.omafm"
     readonly property var barStyle: Style.bar
 
     readonly property Ui.Panel loadedPanel: panelLoader.item as Ui.Panel
@@ -53,7 +53,7 @@ Ui.BarWidget {
         text: ""
         labelVisible: false
         hasVisualContent: true
-        tooltipText: "OmaSDR · " + receiver.status
+        tooltipText: "OmaFM · " + receiver.status
         Ui.OpticalGlyph {
             anchors.centerIn: parent
             width: root.barStyle.iconCanvas

@@ -1,14 +1,14 @@
-# Publishing OmaSDR
+# Publishing OmaFM
 
 Follow the [Omarchy publishing guide](https://plugins.omarchy.org/publish.html)
 and [development guide](https://plugins.omarchy.org/develop.html).
 
-1. Keep the permanent non-reserved ID `com.github.marvreichmann.omasdr`
+1. Keep the permanent non-reserved ID `com.github.marvreichmann.omafm`
    consistent in the root manifest and QML. Confirm the author and license
    before the initial release.
 2. Run the Rust tests, Clippy, `scripts/build.sh`, and `scripts/lint-qml.sh` on
    x86-64 Omarchy. Verify `bin/SHA256SUMS` from the repository root.
-3. Copy `dist/com.github.marvreichmann.omasdr/` into
+3. Copy `dist/com.github.marvreichmann.omafm/` into
    `~/.config/omarchy/plugins/` for runtime testing. Validate the folder,
    rescan, and enable it. Test clicks, typing, tuning,
    volume/mute, Escape, outside dismissal, shell summon/hide, disconnect,
@@ -21,12 +21,12 @@ and [development guide](https://plugins.omarchy.org/develop.html).
 5. Bump `manifest.json` and `Cargo.toml` together, rerun `scripts/build.sh` so
    the committed executable and its metadata match, and add the version's
    section to `CHANGELOG.md`. Push to
-   <https://github.com/marvreichmann/omasdr>, then tag `vX.Y.Z` and push the
+   <https://github.com/marvreichmann/omafm>, then tag `vX.Y.Z` and push the
    tag: `.github/workflows/release.yml` reruns the tests, checks the tag
    against the manifest, the crate, and `bin/build-info.json`, re-verifies the
    committed executable's checksums, and publishes the release with that
    changelog section as its notes. Test
-   `omarchy plugin add https://github.com/marvreichmann/omasdr --enable`.
+   `omarchy plugin add https://github.com/marvreichmann/omafm --enable`.
 6. Submit the repository through the marketplace's linked submission form,
    using a suitable media category and SDR/FM tags. An optimized preview is
    optional. Listing approval remains with the marketplace maintainers.

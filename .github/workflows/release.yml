@@ -31,7 +31,7 @@ jobs:
           tag="${GITHUB_REF_NAME#v}"
           manifest=$(jq -r .version manifest.json)
           crate=$(cargo metadata --no-deps --format-version=1 \
-            | jq -r '.packages[] | select(.name == "omasdr") | .version')
+            | jq -r '.packages[] | select(.name == "omafm") | .version')
           if [ "$tag" != "$manifest" ]; then
             echo "Tag $GITHUB_REF_NAME does not match manifest version $manifest" >&2
             exit 1
@@ -42,7 +42,7 @@ jobs:
           fi
 
       - name: Verify the committed executable
-        # bin/omasdr ships prebuilt, so a tag has to prove that the binary in it
+        # bin/omafm ships prebuilt, so a tag has to prove that the binary in it
         # is still the one built from the source in it. build-info.json carries
         # the hash of the executable and of every file it was compiled from.
         run: |
@@ -52,9 +52,9 @@ jobs:
             echo "Tag $GITHUB_REF_NAME does not match build-info version $info" >&2
             exit 1
           fi
-          test -x bin/omasdr || { echo "bin/omasdr is not executable" >&2; exit 1; }
+          test -x bin/omafm || { echo "bin/omafm is not executable" >&2; exit 1; }
           sha256sum -c bin/SHA256SUMS
-          jq -r '.binarySha256 + "  bin/omasdr"' bin/build-info.json | sha256sum -c -
+          jq -r '.binarySha256 + "  bin/omafm"' bin/build-info.json | sha256sum -c -
           jq -r '.sourceSha256 | to_entries[] | .value + "  " + .key' bin/build-info.json \
             | sha256sum -c -
 

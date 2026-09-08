@@ -1,6 +1,6 @@
 # Rust dependency licenses
 
-Notices for the locked dependency graph, including optional/build-time crates. Enabled runtime dependencies are compiled into bin/omasdr.
+Notices for the locked dependency graph, including optional/build-time crates. Enabled runtime dependencies are compiled into bin/omafm.
 
 - itoa 1.0.18: MIT OR Apache-2.0; https://github.com/dtolnay/itoa
 

@@ -1,5 +1,5 @@
 [package]
-name = "omasdr"
+name = "omafm"
 version = "1.2.0"
 edition = "2024"
 license = "MIT"

@@ -15,9 +15,9 @@ assert manifest["version"] == cargo["package"]["version"], "Manifest/Cargo versi
 metadata = json.loads(subprocess.check_output(["cargo", "metadata", "--locked", "--offline", "--format-version=1"], cwd=root))
 licenses = root / "licenses"
 licenses.mkdir(exist_ok=True)
-index = ["# Rust dependency licenses\n", "Notices for the locked dependency graph, including optional/build-time crates. Enabled runtime dependencies are compiled into bin/omasdr.\n"]
+index = ["# Rust dependency licenses\n", "Notices for the locked dependency graph, including optional/build-time crates. Enabled runtime dependencies are compiled into bin/omafm.\n"]
 for package in metadata["packages"]:
-    if package["name"] == "omasdr":
+    if package["name"] == "omafm":
         continue
     source = pathlib.Path(package["manifest_path"]).parent
     destination = licenses / f'{package["name"]}-{package["version"]}'
@@ -33,7 +33,7 @@ info = {
     "version": manifest["version"],
     "target": "x86_64-unknown-linux-gnu",
     "rustc": subprocess.check_output(["rustc", "--version"], text=True).strip(),
-    "binarySha256": hashlib.sha256((root / "bin/omasdr").read_bytes()).hexdigest(),
+    "binarySha256": hashlib.sha256((root / "bin/omafm").read_bytes()).hexdigest(),
     "sourceSha256": {str(p.relative_to(root)): hashlib.sha256(p.read_bytes()).hexdigest()
                      for p in sorted([root / "Cargo.toml", root / "Cargo.lock", *root.glob("src/*.rs")])},
 }
@@ -48,7 +48,7 @@ for name in ["manifest.json", "BarWidget.qml", "Panel.qml", "Receiver.qml", "Boo
     else:
         shutil.copy2(source, destination / name)
 assert not any(p.is_symlink() for p in destination.rglob("*")), "Plugin cannot contain symlinks"
-archive = root / "dist" / f'omasdr-{manifest["version"]}-linux-x86_64.tar.gz'
+archive = root / "dist" / f'omafm-{manifest["version"]}-linux-x86_64.tar.gz'
 with tarfile.open(archive, "w:gz") as tar:
     tar.add(destination, arcname=manifest["id"])
 archive.with_suffix(archive.suffix + ".sha256").write_text(hashlib.sha256(archive.read_bytes()).hexdigest() + "  " + archive.name + "\n")

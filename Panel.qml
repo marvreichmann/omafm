@@ -6,7 +6,7 @@ import qs.Ui as Ui
 
 Ui.Panel {
     id: root
-    moduleName: "com.github.marvreichmann.omasdr"
+    moduleName: "com.github.marvreichmann.omafm"
     manageIpc: false
 
     property var anchorItem: null
@@ -69,7 +69,7 @@ Ui.Panel {
 
                 Ui.PanelHero {
                     Layout.fillWidth: true
-                    title: "OmaSDR"
+                    title: "OmaFM"
                     meta: root.phaseLabel
                     foreground: root.foreground
                     fontFamily: root.fontFamily

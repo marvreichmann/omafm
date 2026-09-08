@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "id": "com.github.marvreichmann.omasdr",
-  "name": "OmaSDR",
+  "id": "com.github.marvreichmann.omafm",
+  "name": "OmaFM",
   "version": "1.2.0",
   "author": "marv",
   "license": "MIT",
@@ -9,7 +9,7 @@
   "kinds": ["bar-widget"],
   "entryPoints": { "barWidget": "BarWidget.qml" },
   "barWidget": {
-    "displayName": "OmaSDR",
+    "displayName": "OmaFM",
     "description": "Tune stereo broadcast FM from an SDR++ native server and listen through the desktop's default audio output.",
     "category": "Media",
     "allowMultiple": false,

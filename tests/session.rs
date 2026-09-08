@@ -18,7 +18,7 @@ fn listener() -> TcpListener {
     TcpListener::bind("127.0.0.1:0").unwrap()
 }
 fn client(listener: &TcpListener) -> std::process::Child {
-    Command::new(env!("CARGO_BIN_EXE_omasdr"))
+    Command::new(env!("CARGO_BIN_EXE_omafm"))
         .args([
             "--server",
             &listener.local_addr().unwrap().to_string(),

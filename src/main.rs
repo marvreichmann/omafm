@@ -55,7 +55,7 @@ fn options() -> Result<Options, String> {
     while let Some(a) = args.next() {
         if a == "--help" {
             println!(
-                "OmaSDR 1.2.0 — stereo broadcast FM for SDR++\n\
+                "OmaFM 1.2.0 — stereo broadcast FM for SDR++\n\
                 --server HOST:PORT --frequency MHz --volume 0..1\n\
                 --seconds N --wav FILE --no-audio --noise-reduction\n\
                 stdin JSON: {{\"frequency\":102.4}}, {{\"volume\":0.3}},\n\
@@ -423,7 +423,7 @@ mod tests {
     fn writes_a_playable_stereo_wav_header() {
         // The header is written by hand, so parse it back: a wrong channel
         // count or block align silently halves or doubles the playback rate.
-        let path = std::env::temp_dir().join(format!("omasdr-{}.wav", std::process::id()));
+        let path = std::env::temp_dir().join(format!("omafm-{}.wav", std::process::id()));
         let _ = std::fs::remove_file(&path);
         let name = path.to_str().unwrap();
         {

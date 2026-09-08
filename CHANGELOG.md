@@ -27,10 +27,17 @@ follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   pilot with it — so it is off by default and offered as an alternative to
   stereo, not a companion. `--noise-reduction`, or the panel's toggle.
 - The server field opens on the address last connected to, remembered in
-  `omasdr.json` beside the bookmarks.
+  `omafm.json` beside the bookmarks.
 
 ### Changed
 
+- **Renamed to OmaFM**, id `com.github.marvreichmann.omafm`. Another Omarchy
+  plugin, <https://github.com/brytorres/omasdr>, published the OmaSDR name
+  first, and it is the better claim to it: that one is a general SDR receiver
+  over GNU Radio, while this is a broadcast-FM client for an SDR++ server. The
+  name is also more honest about what this does. Entries below 1.2.0 describe
+  the plugin as it was named at the time.
+- Bookmarks moved with it, to `omafm.json`.
 - The bar icon no longer grows a dot while a station is playing.
 - The stats line reports `noiseFloor`, `stereoBlend`, `stereoWidth`, `pilot`
   and `noiseReduction`, so a station that will not hold stereo can be
@@ -51,8 +58,8 @@ follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Notes
 
-- Bookmarks and the last server persist to `$XDG_STATE_HOME/omarchy/omasdr.json`
-  (by default `~/.local/state/omarchy/omasdr.json`), next to the shell's own
+- Bookmarks and the last server persist to `$XDG_STATE_HOME/omarchy/omafm.json`
+  (by default `~/.local/state/omarchy/omafm.json`), next to the shell's own
   state. They cannot live in the widget's Omarchy settings: `settings` reaches
   the widget one-way from the bar's `shell.json` entry, so the panel cannot
   write to it.
@@ -116,7 +123,7 @@ Version 1.0.0 is mono only, with European 50 µs de-emphasis. Source selection,
 gain, and sample rate stay with SDR++; the server must already have a working
 radio source and a sample rate between 240 kHz and 20 MHz.
 
-[Unreleased]: https://github.com/marvreichmann/omasdr/compare/v1.2.0...HEAD
-[1.2.0]: https://github.com/marvreichmann/omasdr/releases/tag/v1.2.0
-[1.1.0]: https://github.com/marvreichmann/omasdr/releases/tag/v1.1.0
-[1.0.0]: https://github.com/marvreichmann/omasdr/releases/tag/v1.0.0
+[Unreleased]: https://github.com/marvreichmann/omafm/compare/v1.2.0...HEAD
+[1.2.0]: https://github.com/marvreichmann/omafm/releases/tag/v1.2.0
+[1.1.0]: https://github.com/marvreichmann/omafm/releases/tag/v1.1.0
+[1.0.0]: https://github.com/marvreichmann/omafm/releases/tag/v1.0.0

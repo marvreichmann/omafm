@@ -15,7 +15,7 @@ Item {
     readonly property string home: Quickshell.env("HOME")
     readonly property string stateDir:
         (Quickshell.env("XDG_STATE_HOME") || home + "/.local/state") + "/omarchy"
-    readonly property string path: stateDir + "/omasdr.json"
+    readonly property string path: stateDir + "/omafm.json"
 
     // [{ name, frequency }] and [{ name, address }], in user-chosen order.
     property var stations: []
@@ -89,7 +89,7 @@ Item {
         } catch (error) {
             // A corrupt file is kept, not overwritten: the user's names are
             // worth more than a clean start, and a rename can rescue them.
-            console.warn("OmaSDR: ignoring unreadable " + path)
+            console.warn("OmaFM: ignoring unreadable " + path)
             return
         }
         stations = readList(parsed.stations, function(entry) {

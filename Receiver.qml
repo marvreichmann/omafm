@@ -66,7 +66,7 @@ Item {
         status = "Connecting…"
         // Built whole and assigned once: reading a QML list property hands back
         // a copy, so pushing onto backend.command would be dropped silently.
-        const argv = [decodeURIComponent(String(Qt.resolvedUrl("bin/omasdr")).replace(/^file:\/\//, "")),
+        const argv = [decodeURIComponent(String(Qt.resolvedUrl("bin/omafm")).replace(/^file:\/\//, "")),
             "--server", server.trim(), "--frequency", String(frequency), "--volume", String(outputVolume)]
         if (noiseReduction) argv.push("--noise-reduction")
         backend.command = argv
@@ -90,7 +90,7 @@ Item {
         interval: 1000
         onTriggered: {
             if (!backend.running && root.status === "Connecting…") {
-                root.status = "Cannot start bundled backend; check bin/omasdr and its executable permission"
+                root.status = "Cannot start bundled backend; check bin/omafm and its executable permission"
                 root.failed = true
             }
         }

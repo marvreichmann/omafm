@@ -1,11 +1,11 @@
-# OmaSDR
+# OmaFM
 
 A small FM radio client for the Omarchy bar. Connect to an **SDR++ native
 server**, tune a frequency, and listen through the desktop's default audio
 output. The QML panel belongs to Omarchy's existing shell; a bundled Rust
 executable handles the network stream, FM demodulation, and playback.
 
-![OmaSDR playing FM with an Omarchy theme](preview.png)
+![OmaFM playing FM with an Omarchy theme](preview.png)
 
 Version 1.2.0 supports **stereo broadcast FM**, 65–108 MHz, with European 50 µs
 de-emphasis. Stations transmitting a 19 kHz pilot play in stereo; weak or mono
@@ -22,32 +22,32 @@ names appear as a row of shortcuts. Click one to switch to it, right-click it �
 or press F2 while it is under the pointer — to rename or remove it, or press
 Alt+1…9 for the first nine stations. Servers can be renamed and removed while
 connected; only switching waits for Disconnect. Bookmarks live in
-`~/.local/state/omarchy/omasdr.json`.
+`~/.local/state/omarchy/omafm.json`.
 
 ## Install
 
 For **x86-64 Omarchy with the Quattro shell**. The plugin includes
-`bin/omasdr`; users do not install Rust, compile anything, or install extra
+`bin/omafm`; users do not install Rust, compile anything, or install extra
 packages. It uses the shell's Qt Quick Controls and the normal Omarchy
 PipeWire/PulseAudio audio stack (`libpulse-simple.so.0`, `libpulse.so.0`) plus
 standard Linux system libraries. It is not a standalone static Linux binary.
 
 ```sh
-omarchy plugin add https://github.com/marvreichmann/omasdr --enable
+omarchy plugin add https://github.com/marvreichmann/omafm --enable
 ```
 
 The prebuilt executable is committed with executable permissions: Omarchy clones
 the repository and does **not** execute installers or build hooks.
 
 To install a locally built archive instead, extract the
-`omasdr-<version>-linux-x86_64.tar.gz` that `scripts/build.sh` writes to
+`omafm-<version>-linux-x86_64.tar.gz` that `scripts/build.sh` writes to
 `dist/` into `~/.config/omarchy/plugins/`. It contains a
-`com.github.marvreichmann.omasdr/` folder. Then run:
+`com.github.marvreichmann.omafm/` folder. Then run:
 
 ```sh
-omarchy plugin validate ~/.config/omarchy/plugins/com.github.marvreichmann.omasdr
+omarchy plugin validate ~/.config/omarchy/plugins/com.github.marvreichmann.omafm
 omarchy-shell shell rescanPlugins
-omarchy plugin enable com.github.marvreichmann.omasdr
+omarchy plugin enable com.github.marvreichmann.omafm
 ```
 
 ## Listen
@@ -71,11 +71,11 @@ Panel edits last for the current widget instance. Optional `server`,
 override those starting values. It never connects automatically on load.
 
 ```sh
-omarchy-shell shell summon com.github.marvreichmann.omasdr '{}'
-omarchy-shell shell hide com.github.marvreichmann.omasdr
-omarchy plugin disable com.github.marvreichmann.omasdr
-omarchy plugin enable com.github.marvreichmann.omasdr
-omarchy plugin remove com.github.marvreichmann.omasdr
+omarchy-shell shell summon com.github.marvreichmann.omafm '{}'
+omarchy-shell shell hide com.github.marvreichmann.omafm
+omarchy plugin disable com.github.marvreichmann.omafm
+omarchy plugin enable com.github.marvreichmann.omafm
+omarchy plugin remove com.github.marvreichmann.omafm
 ```
 
 ## Build and verify (developers only)
@@ -96,9 +96,9 @@ bash scripts/build.sh
 bash scripts/lint-qml.sh
 ```
 
-`scripts/build.sh` creates `bin/omasdr`, its checksum/build metadata and third
-party notices, `dist/com.github.marvreichmann.omasdr/`, and a versioned
-archive. Keep `bin/omasdr`,
+`scripts/build.sh` creates `bin/omafm`, its checksum/build metadata and third
+party notices, `dist/com.github.marvreichmann.omafm/`, and a versioned
+archive. Keep `bin/omafm`,
 `bin/SHA256SUMS`, `bin/build-info.json`, and `licenses/` in the published repo.
 The archive includes the Rust source, lockfile, tests, and build scripts.
 
@@ -109,7 +109,7 @@ stereo-pilot rejection. Integration tests open local TCP sockets.
 For a bounded live test (the WAV path must not already exist):
 
 ```sh
-bin/omasdr --server HOST:5259 --frequency 102.4 --seconds 12 --wav /tmp/fm-test.wav
+bin/omafm --server HOST:5259 --frequency 102.4 --seconds 12 --wav /tmp/fm-test.wav
 ```
 
 `--no-audio` tests decoding without an audio device. Backend stdout contains

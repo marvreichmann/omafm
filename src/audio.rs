@@ -93,7 +93,7 @@ impl Audio {
             let ptr = unsafe {
                 pa_simple_new(
                     std::ptr::null(),
-                    c"OmaSDR".as_ptr(),
+                    c"OmaFM".as_ptr(),
                     1,
                     std::ptr::null(),
                     c"FM radio".as_ptr(),

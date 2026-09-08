@@ -3,6 +3,11 @@
 Tested on x86-64 Omarchy Quattro 4.0.0.alpha, with its existing
 PipeWire/PulseAudio service.
 
+The plugin was named OmaSDR, id `com.github.marvreichmann.omasdr`, up to and
+including 1.2.0's development. The records below name it as it was at the time
+of each test; from the 1.2.0 release on it is OmaFM,
+`com.github.marvreichmann.omafm`. No test below was rerun under the new name.
+
 ## 0.1.0 — backend, audio, and the packaged folder
 
 - Nine Rust tests passed: FM recovery at 250 kHz, 1.024 MHz, and 2.4 MHz;
