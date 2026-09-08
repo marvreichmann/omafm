@@ -13,8 +13,9 @@ follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - **Named bookmarks** for both stations and servers, shown as a row of
   shortcuts under the field each one fills in. `＋` saves what is currently in
   the field and asks for a name; right-clicking a bookmark — or pressing F2 with
-  it focused — opens it for renaming or removal. The bookmark matching the
-  current value is highlighted.
+  it under the pointer — opens it for renaming or removal. The bookmark matching
+  the current value is highlighted. While connected, server bookmarks can still
+  be renamed and removed; only switching server waits for Disconnect.
 - **Alt+1…9** tunes the first nine saved stations without leaving the keyboard.
   Alt is the modifier because a bare digit belongs to the frequency field.
 - A **mute button** beside the volume slider. Muting leaves the slider where it

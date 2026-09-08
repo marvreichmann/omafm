@@ -120,7 +120,13 @@ label on screen.
   shortcut and the JSON; Remove emptied `servers`; `+` created it again. `Alt+2`
   tuned 104.6 MHz and moved the highlight to the second station.
 
-Not tested at 1.2.0: the mouse gestures themselves — no pointer-synthesis tool
+- After the gesture rework, F2 on a focused server bookmark was re-checked: the
+  editor opens with Save and Remove, and Escape leaves the stored file untouched.
+
+Not tested at 1.2.0: the mouse gestures themselves, and F2 driven by hover
+rather than focus — no pointer-synthesis tool is installed and this Hyprland's
+`dispatch movecursor` syntax rejected every form tried. Nor was a server
+bookmark edited while actually connected — no pointer-synthesis tool
 is installed, so right-click was exercised only through `beginRename`, the same
 function `onRightClicked` calls. Mute during playback and everything on-air that
 1.1.0 left outstanding also remain untested.

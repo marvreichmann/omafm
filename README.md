@@ -14,9 +14,11 @@ steps. Volume affects only the radio. Closing the panel keeps audio playing;
 Disconnect, disabling the plugin, or unloading it stops reception.
 
 Save the station or server in the field with `＋` and give it a name; the saved
-names appear as a row of shortcuts. Click one to switch to it, right-click (or
-press F2 on it) to rename or remove it, or press Alt+1…9 for the first nine
-stations. Bookmarks live in `~/.local/state/omarchy/omasdr.json`.
+names appear as a row of shortcuts. Click one to switch to it, right-click it —
+or press F2 while it is under the pointer — to rename or remove it, or press
+Alt+1…9 for the first nine stations. Servers can be renamed and removed while
+connected; only switching waits for Disconnect. Bookmarks live in
+`~/.local/state/omarchy/omasdr.json`.
 
 ## Install
 

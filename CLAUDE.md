@@ -47,7 +47,9 @@ tests fail loudly instead of hanging.
   child pointer handlers never fire, so `clicked` and `rightClicked` are the only
   gestures available — there is no double-click to bind, and F2 exists because
   right-click has no keyboard equivalent. Closing the editor hands focus back to
-  the chip; without that the focus lands nowhere and Tab order restarts.
+  the chip; without that the focus lands nowhere and Tab order restarts. The
+  strip's `switchable` gates only activation — setting `enabled: false` on a
+  strip to stop mid-session server switching also kills rename and remove.
 - `Bookmarks.qml` — named stations and servers in
   `$XDG_STATE_HOME/omarchy/omasdr.json`. Writes are refused until the first load
   settles, so a slow read cannot blank an existing file, and an unparseable file

@@ -48,6 +48,13 @@ Ui.Panel {
             // Alt is the modifier so the digits stay available to the fields:
             // a bare 1-9 would be swallowed while typing a frequency.
             Keys.onPressed: function(event) {
+                // F2 acts on whatever bookmark the pointer is over; the chips
+                // answer it when tabbed to as well, but nobody tabs to a chip
+                // in order to discover that it can be renamed.
+                if (event.key === Qt.Key_F2) {
+                    event.accepted = serverBookmarks.editHovered() || stationBookmarks.editHovered()
+                    return
+                }
                 if (!(event.modifiers & Qt.AltModifier)) return
                 const index = event.key - Qt.Key_1
                 if (index < 0 || index > 8) return
@@ -88,10 +95,12 @@ Ui.Panel {
                     activeFocusOnTab: !readOnly
                 }
                 BookmarkStrip {
+                    id: serverBookmarks
                     Layout.fillWidth: true
-                    // The server cannot change mid-session, so the strip goes
-                    // read-only alongside the field it fills in.
-                    enabled: !(root.receiver && root.receiver.running)
+                    // Only switching is gated while connected. Disabling the
+                    // whole strip also blocked renaming and removing, which have
+                    // nothing to do with the session.
+                    switchable: !(root.receiver && root.receiver.running)
                     items: root.bookmarks ? root.bookmarks.servers : []
                     emptyHint: "No saved servers"
                     saveHint: "Save this server"
@@ -102,7 +111,9 @@ Ui.Panel {
                     suggestedName: root.receiver ? root.receiver.server : ""
                     canSave: root.receiver && root.receiver.server.trim().length > 0
                         && !(root.receiver && root.receiver.running)
-                    onActivated: function(item) { if (root.receiver) root.receiver.server = item.address }
+                    onActivated: function(item) {
+                        if (root.receiver && !root.receiver.running) root.receiver.server = item.address
+                    }
                     onSaved: function(name) {
                         if (root.bookmarks) root.bookmarks.addServer(name, root.receiver.server)
                     }
@@ -139,7 +150,7 @@ Ui.Panel {
                     }
                 }
                 BookmarkStrip {
-                    id: stations
+                    id: stationBookmarks
                     Layout.fillWidth: true
                     items: root.bookmarks ? root.bookmarks.stations : []
                     emptyHint: "No saved stations"
@@ -249,6 +260,10 @@ Ui.Panel {
         required property var detailOf
         required property string suggestedName
         required property bool canSave
+        // Whether clicking a bookmark may change the field it fills in.
+        property bool switchable: true
+        // Which bookmark the pointer is over, or -1.
+        property int hoveredIndex: -1
         signal activated(var item)
         signal saved(string name)
         signal renamed(int index, string name)
@@ -259,6 +274,12 @@ Ui.Panel {
         property int editing: -1
         readonly property bool empty: !items || items.length === 0
 
+        // Whether the hovered bookmark took the request.
+        function editHovered() {
+            if (hoveredIndex < 0 || hoveredIndex >= items.length) return false
+            beginRename(hoveredIndex)
+            return true
+        }
         function beginSave() {
             nameField.text = strip.suggestedName
             editing = -2
@@ -306,7 +327,8 @@ Ui.Panel {
                         // The index doubles as the Alt shortcut for the first
                         // nine, which the panel's footer advertises.
                         tooltipText: strip.detailOf(modelData)
-                            + (index < 9 ? " · Alt+" + (index + 1) : "")
+                            + (index < 9 && strip.switchable ? " · Alt+" + (index + 1) : "")
+                            + (strip.switchable ? "" : " · disconnect to switch")
                             + " · right-click or F2 to rename or remove"
                         Accessible.name: strip.labelOf(modelData) + ", " + strip.detailOf(modelData)
                         selected: strip.valueOf(modelData) === strip.currentValue
@@ -315,7 +337,11 @@ Ui.Panel {
                         foreground: root.foreground
                         fontFamily: root.fontFamily
                         fontSize: root.fonts.caption
-                        onClicked: strip.activated(modelData)
+                        onClicked: if (strip.switchable) strip.activated(modelData)
+                        onHovered: function(isHovered) {
+                            if (isHovered) strip.hoveredIndex = chip.index
+                            else if (strip.hoveredIndex === chip.index) strip.hoveredIndex = -1
+                        }
                         // Ui.Button owns a full-size MouseArea, so a child
                         // TapHandler never sees a press: its own signals are the
                         // only way in, and it has no double-click to offer.
